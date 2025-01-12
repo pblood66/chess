@@ -14,7 +14,8 @@ class BishopMovesCalculator implements PieceMoveCalculator {
         int[][] directions = {{1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
 
         for (int [] dir : directions) {
-            possibleMoves.add(PieceMoveCalculator.calculateSingleMove(position, dir));
+            HashSet<ChessMove> directionMoves = PieceMoveCalculator.calculateEntireDirection(board, position, dir);
+            possibleMoves.addAll(directionMoves);
         }
 
         return possibleMoves;
