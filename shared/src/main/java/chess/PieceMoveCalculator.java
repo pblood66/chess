@@ -1,6 +1,5 @@
 package chess;
 import java.util.HashSet;
-import java.util.List;
 
 public interface PieceMoveCalculator {
     static HashSet<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
@@ -11,10 +10,7 @@ public interface PieceMoveCalculator {
         if (position.getRow() > 8 || position.getRow() < 1) {
             return false;
         }
-        if (position.getColumn() > 8 || position.getColumn() < 1) {
-            return false;
-        }
-        return true;
+        return position.getColumn() <= 8 && position.getColumn() >= 1;
     }
 
     static HashSet<ChessMove> calculateEntireDirection(ChessBoard board, ChessPosition position, int[] direction) {
