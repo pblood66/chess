@@ -40,6 +40,9 @@ public class ChessPosition {
         return row;
     }
 
+    // avoids out of bounds exception with array [0-7]
+    public int getArrayRow() { return row - 1; }
+
     /**
      * @return which column this position is in
      * 1 codes for the left row
@@ -47,4 +50,7 @@ public class ChessPosition {
     public int getColumn() {
         return col;
     }
+
+    // to avoid out of bounds exception with array [0-7]
+    public int getArrayCol() { return col - 1; }
 }

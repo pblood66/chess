@@ -1,6 +1,7 @@
 package chess;
 
 import chess.moves.BishopMovesCalculator;
+import chess.moves.QueenMovesCalculator;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -73,10 +74,11 @@ public class ChessPiece {
 
         Collection<ChessMove> moves = new HashSet<ChessMove>();
 
-        switch (type) {
-            case BISHOP:
-                moves = BishopMovesCalculator.pieceMoves(board, myPosition);
-        }
+        moves = switch (type) {
+            case BISHOP -> BishopMovesCalculator.pieceMoves(board, myPosition);
+            case QUEEN -> QueenMovesCalculator.pieceMoves(board, myPosition);
+            default -> moves;
+        };
 
         return moves;
 
