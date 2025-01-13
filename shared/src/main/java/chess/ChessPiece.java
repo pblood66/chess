@@ -1,6 +1,7 @@
 package chess;
 
 import chess.moves.BishopMovesCalculator;
+import chess.moves.KnightMovesCalculator;
 import chess.moves.QueenMovesCalculator;
 import chess.moves.RookMovesCalculator;
 
@@ -73,12 +74,13 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
 
-        Collection<ChessMove> moves = new HashSet<ChessMove>();
+        Collection<ChessMove> moves = new HashSet<>();
 
         moves = switch (type) {
             case BISHOP -> BishopMovesCalculator.pieceMoves(board, myPosition);
             case QUEEN -> QueenMovesCalculator.pieceMoves(board, myPosition);
             case ROOK -> RookMovesCalculator.pieceMoves(board, myPosition);
+            case KNIGHT -> KnightMovesCalculator.pieceMoves(board, myPosition);
             default -> moves;
         };
 
