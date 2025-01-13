@@ -19,6 +19,28 @@ public interface PieceMoveCalculator {
     }
 
 
+    static HashSet<ChessMove> calculateBoundMove(ChessBoard board, ChessPosition position, int[][] paths) {
+        HashSet<ChessMove> possibleMoves = new HashSet<>();
+        ChessGame.TeamColor pieceColor = board.getPiece(position).getTeamColor();
+
+        for (int[] path : paths) {
+            ChessMove currentMove = calculateSingleMove(position, position, path);
+            ChessPosition finalPosition = currentMove.getEndPosition();
+
+            if (moveIsInBounds(finalPosition)) {
+                if (board.getPiece(finalPosition) == null) {
+                    possibleMoves.add(currentMove);
+                }
+                // if move is valid capture (different colors), add to set and continue
+                else if (board.getPiece(finalPosition).getTeamColor() != pieceColor) {
+                    possibleMoves.add(currentMove);
+                }
+            }
+        }
+
+        return possibleMoves;
+    }
+
     static HashSet<ChessMove> calculateEntireDirection(ChessBoard board, ChessPosition position, int[] direction) {
         HashSet<ChessMove> possibleMoves = new HashSet<>();
         ChessPosition currentPosition = position;
