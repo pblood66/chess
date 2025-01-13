@@ -13,18 +13,37 @@ public interface PieceMoveCalculator {
         return position.getColumn() <= 8 && position.getColumn() >= 1;
     }
 
+
     static HashSet<ChessMove> calculateEntireDirection(ChessBoard board, ChessPosition position, int[] direction) {
         HashSet<ChessMove> possibleMoves = new HashSet<>();
         ChessPosition currentPosition = position;
-        while (true) {
+        ChessGame.TeamColor pieceColor = board.getPiece(position).getTeamColor();
+        boolean canMove = true;
+
+        while (canMove) {
             ChessMove currentMove = calculateSingleMove(currentPosition, position, direction);
             currentPosition = currentMove.getEndPosition();
 
-            // if move is outside the chessboard break from loop
-            if (!moveIsInBounds(currentMove.getEndPosition())) {
-                break;
+            // if move is outside the chessboard break and don't add move to set
+            if (!moveIsInBounds(currentPosition)) {
+                canMove = false;
             }
-            possibleMoves.add(currentMove);
+            // if space is empty add to set
+            else if (board.getPiece(currentPosition) == null) {
+                possibleMoves.add(currentMove);
+            }
+            // if move is valid capture (different colors), add to set and break
+            else if (board.getPiece(currentPosition).getTeamColor() != pieceColor) {
+                possibleMoves.add(currentMove);
+                canMove = false;
+            }
+            // if move is blocked by ally, break and don't add move to set
+            else if (board.getPiece(currentPosition).getTeamColor() == pieceColor) {
+                canMove = false;
+            }
+            else {
+                canMove = false;
+            }
         }
 
         return possibleMoves;
