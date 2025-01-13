@@ -11,10 +11,10 @@ public class BishopMovesCalculator implements PieceMoveCalculator {
     public static HashSet<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
         HashSet<ChessMove> possibleMoves = new HashSet<>();
 
-        int[][] directions = {{1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
+        int[][] paths = {{1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
 
-        for (int [] dir : directions) {
-            HashSet<ChessMove> directionMoves = PieceMoveCalculator.calculateEntireDirection(board, position, dir);
+        for (int [] path : paths) {
+            HashSet<ChessMove> directionMoves = PieceMoveCalculator.calculateEntireDirection(board, position, path);
             possibleMoves.addAll(directionMoves);
         }
 
