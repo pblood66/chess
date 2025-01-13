@@ -1,9 +1,13 @@
-package chess;
+package chess.moves;
+
+import chess.ChessBoard;
+import chess.ChessMove;
+import chess.ChessPosition;
 
 import java.util.HashSet;
 
 
-class BishopMovesCalculator implements PieceMoveCalculator {
+public class BishopMovesCalculator implements PieceMoveCalculator {
     public static HashSet<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
         HashSet<ChessMove> possibleMoves = new HashSet<>();
 

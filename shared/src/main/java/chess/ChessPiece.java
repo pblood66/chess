@@ -1,6 +1,7 @@
 package chess;
 
-import java.util.ArrayList;
+import chess.moves.BishopMovesCalculator;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
