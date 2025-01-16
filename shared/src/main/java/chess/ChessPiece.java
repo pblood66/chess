@@ -2,6 +2,7 @@ package chess;
 
 import chess.moves.*;
 
+import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -73,14 +74,22 @@ public class ChessPiece {
 
         Collection<ChessMove> moves = new HashSet<>();
 
-        moves = switch (type) {
-            case BISHOP -> BishopMovesCalculator.pieceMoves(board, myPosition);
-            case QUEEN -> QueenMovesCalculator.pieceMoves(board, myPosition);
-            case ROOK -> RookMovesCalculator.pieceMoves(board, myPosition);
-            case KNIGHT -> KnightMovesCalculator.pieceMoves(board, myPosition);
-            case KING -> KingMovesCalculator.pieceMoves(board, myPosition);
-            default -> moves;
-        };
+        if (type.equals(PieceType.BISHOP)) {
+            BishopMovesCalculator calculator = new BishopMovesCalculator(board, myPosition);
+            moves = calculator.pieceMoves();
+        } else if (type.equals(PieceType.ROOK)) {
+            RookMovesCalculator calculator = new RookMovesCalculator(board, myPosition);
+            moves = calculator.pieceMoves();
+        } else if (type.equals(PieceType.QUEEN)) {
+            QueenMovesCalculator calculator = new QueenMovesCalculator(board, myPosition);
+            moves = calculator.pieceMoves();
+        } else if (type.equals(PieceType.KING)) {
+            KingMovesCalculator calculator = new KingMovesCalculator(board, myPosition);
+            moves = calculator.pieceMoves();
+        } else if (type.equals(PieceType.KNIGHT)) {
+            KnightMovesCalculator calculator = new KnightMovesCalculator(board, myPosition);
+            moves = calculator.pieceMoves();
+        }
 
         return moves;
 

@@ -1,6 +1,7 @@
 package chess.moves;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 
@@ -8,10 +9,17 @@ import java.util.HashSet;
 
 
 public class BishopMovesCalculator implements PieceMoveCalculator {
-    public static HashSet<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
-        HashSet<ChessMove> possibleMoves = new HashSet<>();
+    private final ChessBoard board;
+    private final ChessPosition position;
+    static final int[][] paths = {{1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
 
-        int[][] paths = {{1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
+    public BishopMovesCalculator(ChessBoard board, ChessPosition position) {
+        this.board = board;
+        this.position = position;
+    }
+
+    public HashSet<ChessMove> pieceMoves() {
+        HashSet<ChessMove> possibleMoves = new HashSet<>();
 
         for (int [] path : paths) {
             HashSet<ChessMove> directionMoves = PieceMoveCalculator.calculateEntireDirection(board, position, path);
