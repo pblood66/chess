@@ -74,7 +74,11 @@ public class ChessPiece {
 
         Collection<ChessMove> moves = new HashSet<>();
 
-        if (type.equals(PieceType.BISHOP)) {
+        if (type.equals(ChessPiece.PieceType.PAWN)) {
+            PawnMovesCalculator calculator = new PawnMovesCalculator(board, myPosition);
+            moves = calculator.pieceMoves();
+        }
+        else if (type.equals(PieceType.BISHOP)) {
             BishopMovesCalculator calculator = new BishopMovesCalculator(board, myPosition);
             moves = calculator.pieceMoves();
         } else if (type.equals(PieceType.ROOK)) {

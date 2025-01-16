@@ -3,6 +3,7 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
+import chess.ChessPiece;
 
 import java.util.HashSet;
 
@@ -83,5 +84,14 @@ public interface PieceMoveCalculator {
         ChessPosition newPosition = new ChessPosition(moveRow, moveCol);
 
         return new ChessMove(initialPosition, newPosition, null);
+    }
+
+    static ChessMove calculateSingleMove(ChessPosition currentPosition, ChessPosition initialPosition, int[] path, ChessPiece.PieceType promotion) {
+        int moveRow = currentPosition.getRow() + path[0];
+        int moveCol = currentPosition.getColumn() + path[1];
+
+        ChessPosition newPosition = new ChessPosition(moveRow, moveCol);
+
+        return new ChessMove(initialPosition, newPosition, promotion);
     }
 }
