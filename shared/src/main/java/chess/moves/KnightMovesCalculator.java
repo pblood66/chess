@@ -9,7 +9,7 @@ import java.util.HashSet;
 public class KnightMovesCalculator {
     private final ChessBoard board;
     private final ChessPosition position;
-    static final int[][] Paths = {{1,2}, {2,1}, {2,-1}, {1, -2}, {-1, -2}, {-2, -1}, {-2, 1}, {-1, 2}};
+    static final int[][] PATHS = {{1,2}, {2,1}, {2,-1}, {1, -2}, {-1, -2}, {-2, -1}, {-2, 1}, {-1, 2}};
 
     public KnightMovesCalculator(ChessBoard board, ChessPosition position) {
         this.board = board;
@@ -17,6 +17,6 @@ public class KnightMovesCalculator {
     }
 
     public HashSet<ChessMove> pieceMoves() {
-        return PieceMoveCalculator.calculateBoundMove(board, position, Paths);
+        return PieceMoveCalculator.calculateBoundMove(board, position, PATHS);
     }
 }

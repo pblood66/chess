@@ -10,7 +10,7 @@ import java.util.HashSet;
 public class BishopMovesCalculator implements PieceMoveCalculator {
     private final ChessBoard board;
     private final ChessPosition position;
-    static final int[][] Paths = {{1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
+    static final int[][] PATHS = {{1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
 
     public BishopMovesCalculator(ChessBoard board, ChessPosition position) {
         this.board = board;
@@ -20,7 +20,7 @@ public class BishopMovesCalculator implements PieceMoveCalculator {
     public HashSet<ChessMove> pieceMoves() {
         HashSet<ChessMove> possibleMoves = new HashSet<>();
 
-        for (int [] path : Paths) {
+        for (int [] path : PATHS) {
             HashSet<ChessMove> directionMoves = PieceMoveCalculator.calculateEntireDirection(board, position, path);
             possibleMoves.addAll(directionMoves);
         }
