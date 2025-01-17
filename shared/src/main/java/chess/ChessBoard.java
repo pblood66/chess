@@ -55,6 +55,71 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        // reset board to null
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                board[i][j] = null;
+            }
+        }
+
+        ChessGame.TeamColor[] teamColors = ChessGame.TeamColor.values();
+
+        // black pawns row 7, white pawns row 2
+        for (ChessGame.TeamColor team : teamColors) {
+            addPawns(team);
+            addBackRow(team);
+        }
+
+
+    }
+
+    private void addPawns(ChessGame.TeamColor team) {
+        int row = team == ChessGame.TeamColor.WHITE ? 2 : 7;
+
+        for (int i =1; i <= 8; i++) {
+            ChessPosition position = new ChessPosition(row, i);
+            ChessPiece pawn = new ChessPiece(team, ChessPiece.PieceType.PAWN);
+
+            addPiece(position, pawn);
+        }
+    }
+
+    private void addBackRow(ChessGame.TeamColor team) {
+        int row = team == ChessGame.TeamColor.WHITE ? 1 : 8;
+        ChessPiece.PieceType[] backRow = {ChessPiece.PieceType.ROOK, ChessPiece.PieceType.KNIGHT, ChessPiece.PieceType.BISHOP};
+
+        for (int i = 0; i < backRow.length; i++) {
+            ChessPiece piece = new ChessPiece(team, backRow[i]);
+            ChessPosition position = new ChessPosition(row, i + 1);
+
+            addPiece(position, piece);
+        }
+
+        addPiece(new ChessPosition(row, 4), new ChessPiece(team, ChessPiece.PieceType.QUEEN));
+        addPiece(new ChessPosition(row, 5), new ChessPiece(team, ChessPiece.PieceType.KING));
+
+        for (int i = backRow.length - 1; i >= 0; i--) {
+            ChessPiece piece = new ChessPiece(team, backRow[i]);
+            ChessPosition position = new ChessPosition(row, 8 - i);
+
+            addPiece(position, piece);
+        }
+
+    }
+
+    public void printBoard() {
+        for (ChessPiece[] row : board) {
+            for (ChessPiece piece : row) {
+                System.out.print("|");
+                if (piece != null) {
+                    System.out.print(piece);
+                }
+                else {
+                    System.out.print(" ");
+                }
+            }
+                System.out.print("|");
+                System.out.println();
+        }
     }
 }

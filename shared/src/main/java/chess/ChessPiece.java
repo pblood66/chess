@@ -39,6 +39,10 @@ public class ChessPiece {
 
     @Override
     public String toString() {
+        if (pieceColor == ChessGame.TeamColor.WHITE) {
+            return String.valueOf(Character.toLowerCase(type.getCharValue()));
+        }
+
         return String.valueOf(type.getCharValue());
     }
 
@@ -49,7 +53,7 @@ public class ChessPiece {
         KING('K'),
         QUEEN('Q'),
         BISHOP('B'),
-        KNIGHT('k'),
+        KNIGHT('N'),
         ROOK('R'),
         PAWN('P');
 
