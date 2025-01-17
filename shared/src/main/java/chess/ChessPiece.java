@@ -37,16 +37,32 @@ public class ChessPiece {
         return Objects.hash(pieceColor, type);
     }
 
+    @Override
+    public String toString() {
+        return String.valueOf(type.getCharValue());
+    }
+
     /**
      * The various different chess piece options
      */
     public enum PieceType {
-        KING,
-        QUEEN,
-        BISHOP,
-        KNIGHT,
-        ROOK,
-        PAWN
+        KING('K'),
+        QUEEN('Q'),
+        BISHOP('B'),
+        KNIGHT('k'),
+        ROOK('R'),
+        PAWN('P');
+
+        private char value;
+
+        PieceType(char value) {
+            this.value = value;
+        }
+
+        public char getCharValue() {
+            return value;
+        }
+
     }
 
     /**
