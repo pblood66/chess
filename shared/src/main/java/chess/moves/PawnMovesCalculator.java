@@ -41,7 +41,7 @@ public class PawnMovesCalculator implements PieceMoveCalculator {
 
         int currRow = position.getRow();
         int currCol = position.getColumn();
-        // if the pawn hasn't moved, it can move 1 or 2 rows
+        // calculate moves in pawn's column
         if (isOnStart()) {
             for (int[] path : paths) {
                 ChessPosition potMove = new ChessPosition(currRow + path[0], currCol + path[1]);
@@ -57,6 +57,21 @@ public class PawnMovesCalculator implements PieceMoveCalculator {
                 for (ChessPiece.PieceType promotion : promotionTypes) {
                     moves.add(PieceMoveCalculator.calculateSingleMove(position, position, paths[0], promotion));
                 }
+            }
+        }
+
+        //  calculate attack moves
+        for (ChessPiece.PieceType promotion : promotionTypes) {
+            for (int[] attack : attackPath) {
+                // check if there is an enemy
+                // add move if there is
+                ChessPosition enemy = new ChessPosition(currRow + attack[0], currCol + attack[1]);
+                if (PieceMoveCalculator.moveIsInBounds(enemy)) {
+                    if (board.getPiece(enemy) != null && board.getPiece(enemy).getTeamColor() != pieceColor) {
+                        moves.add(PieceMoveCalculator.calculateSingleMove(position, position, attack, promotion));
+                    }
+                }
+
             }
         }
 
