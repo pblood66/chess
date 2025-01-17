@@ -2,7 +2,6 @@ package chess;
 
 import chess.moves.*;
 
-import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -57,7 +56,7 @@ public class ChessPiece {
         ROOK('R'),
         PAWN('P');
 
-        private char value;
+        private final char value;
 
         PieceType(char value) {
             this.value = value;

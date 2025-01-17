@@ -6,10 +6,10 @@ import chess.ChessPosition;
 
 import java.util.HashSet;
 
-public class QueenMovesCalculator {
+public class QueenMovesCalculator implements PieceMoveCalculator {
     private final ChessBoard board;
     private final ChessPosition position;
-    static final int[][] paths = {{1, 1}, {-1, 1}, {1, -1}, {-1, -1}, {1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+    static final int[][] Paths = {{1, 1}, {-1, 1}, {1, -1}, {-1, -1}, {1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 
     public QueenMovesCalculator(ChessBoard board, ChessPosition position) {
         this.board = board;
@@ -19,7 +19,7 @@ public class QueenMovesCalculator {
     public HashSet<ChessMove> pieceMoves() {
         HashSet<ChessMove> possibleMoves = new HashSet<>();
 
-        for (int [] path : paths) {
+        for (int [] path : Paths) {
             HashSet<ChessMove> directionMoves = PieceMoveCalculator.calculateEntireDirection(board, position, path);
             possibleMoves.addAll(directionMoves);
         }

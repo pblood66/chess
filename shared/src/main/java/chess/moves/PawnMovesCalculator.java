@@ -36,7 +36,8 @@ public class PawnMovesCalculator implements PieceMoveCalculator {
         // if pawn is on second to last row, it can promote in next move
         ChessPiece.PieceType[] promotionTypes = {null};
         if (canPromote()) {
-            promotionTypes = new ChessPiece.PieceType[] {ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.QUEEN, ChessPiece.PieceType.KNIGHT, ChessPiece.PieceType.ROOK};
+            promotionTypes = new ChessPiece.PieceType[] {ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.QUEEN,
+                     ChessPiece.PieceType.KNIGHT, ChessPiece.PieceType.ROOK};
         }
 
         int currRow = position.getRow();
