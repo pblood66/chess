@@ -88,22 +88,7 @@ public class PawnMovesCalculator implements PieceMoveCalculator {
         return false;
     }
 
-    private HashSet<ChessMove> calculateStartMoves(int[][] paths) {
-        HashSet<ChessMove> moves = new HashSet<>();
-        if (isBlocked(paths[0])) return moves;
-        else {
-            moves.add(PieceMoveCalculator.calculateSingleMove(position, position, paths[0]));
-        }
-
-        if (isBlocked(paths[1])) return moves;
-        else {
-            moves.add(PieceMoveCalculator.calculateSingleMove(position, position, paths[1]));
-        }
-
-        return moves;
-    }
-
-    boolean canPromote() {
+    private boolean canPromote() {
         if (pieceColor == TeamColor.WHITE) {
             return position.getRow() == 7;
         }
@@ -112,37 +97,4 @@ public class PawnMovesCalculator implements PieceMoveCalculator {
         }
         return false;
     }
-
-    private boolean isEnemy(int[] attackDirection) {
-        ChessPosition enemyPosition = new ChessPosition(position.getRow() + attackDirection[0],
-                position.getColumn() + attackDirection[1]);
-
-        return board.getPiece(enemyPosition).getTeamColor() != pieceColor;
-    }
-
-    ChessMove attackPiece(int[] attackDirection) {
-        ChessPosition enemyPosition = new ChessPosition(position.getRow() + attackDirection[0],
-                position.getColumn() + attackDirection[1]);
-
-        if (board.getPiece(enemyPosition) == null) return null;
-
-        // if the move is lands on an enemy, capture enemy
-        if (board.getPiece(enemyPosition).getTeamColor() != pieceColor) {
-            return new ChessMove(position, enemyPosition, null);
-        }
-
-        return null;
-    }
-
-    boolean isBlocked(int[] path) {
-        ChessPosition checkPosition = new ChessPosition(position.getRow() + path[0],
-                position.getColumn() + path[1]);
-
-        return !(board.getPiece(checkPosition) == null);
-    }
-
-
-
-
-
 }
