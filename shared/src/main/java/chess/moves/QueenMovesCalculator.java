@@ -19,6 +19,9 @@ public class QueenMovesCalculator implements PieceMoveCalculator {
     public HashSet<ChessMove> pieceMoves() {
         HashSet<ChessMove> possibleMoves = new HashSet<>();
 
+        // int[][] Paths = {{1, 1}, {-1, 1}, {1, -1}, {-1, -1}, {1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+
+
         for (int [] path : PATHS) {
             HashSet<ChessMove> directionMoves = PieceMoveCalculator.calculateEntireDirection(board, position, path);
             possibleMoves.addAll(directionMoves);
