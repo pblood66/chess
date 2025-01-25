@@ -1,9 +1,13 @@
 package chess;
 
 import chess.moves.*;
+import chess.moves.bounded.KingMoves;
+import chess.moves.bounded.KnightMoves;
+import chess.moves.directional.BishopMoves;
+import chess.moves.directional.QueenMoves;
+import chess.moves.directional.RookMoves;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Objects;
 
 /**
@@ -90,32 +94,15 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        MoveCalculator calculator = switch(type) {
+            case BISHOP -> new BishopMoves(board, myPosition);
+            case QUEEN -> new QueenMoves(board, myPosition);
+            case ROOK -> new RookMoves(board, myPosition);
+            case KING -> new KingMoves(board, myPosition);
+            case KNIGHT -> new KnightMoves(board, myPosition);
+            case PAWN -> new PawnMoves(board, myPosition);
+        };
 
-        Collection<ChessMove> moves = new HashSet<>();
-
-        if (type.equals(ChessPiece.PieceType.PAWN)) {
-            PawnMovesCalculator calculator = new PawnMovesCalculator(board, myPosition);
-            moves = calculator.pieceMoves();
-        }
-        else if (type.equals(PieceType.BISHOP)) {
-            BishopMovesCalculator calculator = new BishopMovesCalculator(board, myPosition);
-            moves = calculator.pieceMoves();
-        } else if (type.equals(PieceType.ROOK)) {
-            RookMovesCalculator calculator = new RookMovesCalculator(board, myPosition);
-            moves = calculator.pieceMoves();
-        } else if (type.equals(PieceType.QUEEN)) {
-            QueenMovesCalculator calculator = new QueenMovesCalculator(board, myPosition);
-            moves = calculator.pieceMoves();
-        } else if (type.equals(PieceType.KING)) {
-            KingMovesCalculator calculator = new KingMovesCalculator(board, myPosition);
-            moves = calculator.pieceMoves();
-        } else if (type.equals(PieceType.KNIGHT)) {
-            KnightMovesCalculator calculator = new KnightMovesCalculator(board, myPosition);
-            moves = calculator.pieceMoves();
-        }
-
-        return moves;
-
-
+        return calculator.pieceMoves();
     }
 }
