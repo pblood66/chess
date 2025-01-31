@@ -27,7 +27,7 @@ public abstract class MoveCalculator implements Calculable {
         return new ChessMove(position, endPosition, promotion);
     }
 
-    protected boolean isOutOfBounds(ChessPosition newPosition) {
+    public static boolean isOutOfBounds(ChessPosition newPosition) {
         int row = newPosition.getRow();
         int col = newPosition.getColumn();
 

@@ -1,5 +1,7 @@
 package chess;
 
+import chess.moves.MoveCalculator;
+
 import java.util.Collection;
 
 /**
@@ -77,22 +79,76 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
+        ChessPosition kingPosition = getKingPosition(teamColor);
+
+        if (enemyCanCapture(teamColor, kingPosition)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public ChessPosition getKingPosition(TeamColor teamColor) {
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                ChessPosition current = new ChessPosition(i, j);
+                ChessPiece potentialKing = board.getPiece(current);
+
+                if (potentialKing != null && potentialKing.getPieceType() == ChessPiece.PieceType.KING
+                        && potentialKing.getTeamColor() == teamColor) {
+                    return current;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Determines if the given team is in checkmate
+     *
+     * @param teamColor which team to check for checkmate
+     * @return True if the specified team is in checkmate
+     */
+    public boolean isInCheckmate(TeamColor teamColor) {
+        ChessPosition kingPosition = getKingPosition(teamColor);
+        int[][] relativePositions = {{1, 0}, {0 ,1}, {-1, 0}, {0, -1}, {1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
+
+        // For pawn valid moves, copy a new board and place kings in all the relative positions
+
+
+        // king is in checkmate if positions surrounding king and king position have valid moves
+        if (!isInCheck(teamColor)) {
+            return false;
+        }
+
+        for (int[] pos : relativePositions) {
+            ChessPosition currentPosition = new ChessPosition(kingPosition.getRow() + pos[0],
+                    kingPosition.getColumn() + pos[1]);
+            // need to check if currentPosition is in bounds of the boards
+            if (MoveCalculator.isOutOfBounds(currentPosition)) {
+                continue;
+            }
+
+            if (!enemyCanCapture(teamColor, currentPosition)) {
+                return false;
+            }
+
+        }
+
+        return true;
+    }
+
+    public boolean enemyCanCapture(TeamColor teamColor, ChessPosition position) {
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
                 ChessPosition currentPosition = new ChessPosition(i, j);
                 ChessPiece currentPiece = board.getPiece(currentPosition);
 
-                if (currentPiece == null) {
-                    continue;
-                }
-                else if (currentPiece.getTeamColor() != teamColor) {
+                if (currentPiece != null && currentPiece.getTeamColor() != teamColor) {
                     Collection<ChessMove> moves = currentPiece.pieceMoves(board, currentPosition);
                     for (ChessMove move : moves) {
-                        ChessPiece potentialKing = board.getPiece(move.getEndPosition());
-                        if (potentialKing == null || potentialKing.getPieceType() != ChessPiece.PieceType.KING) {
-                            continue;
-                        }
-                        else {
+                        ChessPosition endPosition = move.getEndPosition();
+                        if (endPosition.equals(position)) {
                             return true;
                         }
                     }
@@ -103,15 +159,7 @@ public class ChessGame {
         return false;
     }
 
-    /**
-     * Determines if the given team is in checkmate
-     *
-     * @param teamColor which team to check for checkmate
-     * @return True if the specified team is in checkmate
-     */
-    public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
-    }
+
 
     /**
      * Determines if the given team is in stalemate, which here is defined as having
