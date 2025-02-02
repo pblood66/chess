@@ -146,7 +146,6 @@ public class ChessBoard implements Cloneable {
 
             addPiece(position, piece);
         }
-
     }
 
     public void printBoard() {
@@ -165,5 +164,12 @@ public class ChessBoard implements Cloneable {
         }
     }
 
+    public HashMap<ChessPiece, ArrayList<ChessPosition>> getPieces() {
+        return pieces;
+    }
+
+    public ArrayList<ChessPosition> getPositionArray(ChessPiece piece) {
+        return pieces.get(piece);
+    }
 
 }
