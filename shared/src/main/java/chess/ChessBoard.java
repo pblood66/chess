@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -10,10 +12,16 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessBoard implements Cloneable {
-    private final ChessPiece[][] board = new ChessPiece[8][8];
+    private ChessPiece[][] board = new ChessPiece[8][8];
+    private HashMap<ChessPiece, ArrayList<ChessPosition>> pieces = new HashMap<>();
 
     public ChessBoard() {
-        
+        // populate HashMap with every pieceType and empty arrayList
+        for (ChessPiece.PieceType pieceType : ChessPiece.PieceType.values()) {
+            for (ChessGame.TeamColor teamColor : ChessGame.TeamColor.values()) {
+                pieces.put(new ChessPiece(teamColor, pieceType), new ArrayList<ChessPosition>());
+            }
+        }
     }
 
     @Override
@@ -21,15 +29,27 @@ public class ChessBoard implements Cloneable {
         try {
             ChessBoard clone = (ChessBoard) super.clone();
 
+            clone.board = new ChessPiece[8][8];
+            clone.pieces = new HashMap<>();
+
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
                     ChessPiece piece = board[i][j];
+                    if (piece != null) {
+                        clone.board[i][j] = new ChessPiece(piece.getTeamColor(), piece.getPieceType());
 
-                    clone.board[i][j] = new ChessPiece(piece.getTeamColor(), piece.getPieceType());
+                    }
                 }
             }
 
+            for (ChessPiece piece : pieces.keySet()) {
+                ArrayList<ChessPosition> piecePositions = new ArrayList<>();
+                piecePositions.addAll(pieces.get(piece));
+                clone.pieces.put(piece, piecePositions);
+            }
+
             return clone;
+
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
@@ -58,6 +78,7 @@ public class ChessBoard implements Cloneable {
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
         board[position.getArrayRow()][position.getArrayCol()] = piece;
+        pieces.get(piece).add(position);
     }
 
     /**
@@ -143,4 +164,6 @@ public class ChessBoard implements Cloneable {
                 System.out.println();
         }
     }
+
+
 }
