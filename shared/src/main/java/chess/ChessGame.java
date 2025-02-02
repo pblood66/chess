@@ -2,7 +2,9 @@ package chess;
 
 import chess.moves.MoveCalculator;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -19,6 +21,7 @@ public class ChessGame {
         this.board = new ChessBoard();
         this.board.resetBoard();
         this.teamTurn = TeamColor.WHITE;
+
     }
 
     /**
@@ -81,27 +84,13 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingPosition = getKingPosition(teamColor);
 
-        if (enemyCanCapture(teamColor, kingPosition)) {
+        if (enemyCanCapture(this.board, teamColor, kingPosition)) {
             return true;
         }
 
         return false;
     }
 
-    public ChessPosition getKingPosition(TeamColor teamColor) {
-        for (int i = 1; i <= 8; i++) {
-            for (int j = 1; j <= 8; j++) {
-                ChessPosition current = new ChessPosition(i, j);
-                ChessPiece potentialKing = board.getPiece(current);
-
-                if (potentialKing != null && potentialKing.getPieceType() == ChessPiece.PieceType.KING
-                        && potentialKing.getTeamColor() == teamColor) {
-                    return current;
-                }
-            }
-        }
-        return null;
-    }
 
     /**
      * Determines if the given team is in checkmate
@@ -114,12 +103,22 @@ public class ChessGame {
         int[][] relativePositions = {{1, 0}, {0 ,1}, {-1, 0}, {0, -1}, {1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
 
         // For pawn valid moves, copy a new board and place kings in all the relative positions
+        ChessBoard kingBoard = makeKingBoard(board.clone(), kingPosition, relativePositions);
+        // Bug: Directional pieces like rook & Queen get messed up by the kingBoard
+        // filter if Knight, King, or Pawn then use kingBoard
 
+
+        board.printBoard();
+        System.out.println();
+        kingBoard.printBoard();
 
         // king is in checkmate if positions surrounding king and king position have valid moves
         if (!isInCheck(teamColor)) {
             return false;
         }
+        // get threatening piece
+        // if allied pieces can capture threatening piece then not checkmate
+
 
         for (int[] pos : relativePositions) {
             ChessPosition currentPosition = new ChessPosition(kingPosition.getRow() + pos[0],
@@ -129,7 +128,11 @@ public class ChessGame {
                 continue;
             }
 
-            if (!enemyCanCapture(teamColor, currentPosition)) {
+            if (!enemyCanCapture(kingBoard, teamColor, currentPosition)) {
+                if (board.getPiece(currentPosition) != null) {
+                    continue;
+                }
+
                 return false;
             }
 
@@ -138,14 +141,77 @@ public class ChessGame {
         return true;
     }
 
-    public boolean enemyCanCapture(TeamColor teamColor, ChessPosition position) {
+    /**
+     * Determines if the given team is in stalemate, which here is defined as having
+     * no valid moves
+     *
+     * @param teamColor which team to check for stalemate
+     * @return True if the specified team is in stalemate, otherwise false
+     */
+    public boolean isInStalemate(TeamColor teamColor) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    // private ChessPosition getThreateningPiece();
+
+
+    private ChessBoard makeKingBoard(ChessBoard board, ChessPosition kingPosition,
+                               int[][] relativePositions) {
+        TeamColor kingTeam = board.getPiece(kingPosition).getTeamColor();
+        for (int[] pos : relativePositions) {
+            int row = kingPosition.getRow() + pos[0];
+            int col = kingPosition.getColumn() + pos[1];
+            ChessPosition newPosition = new ChessPosition(row, col);
+
+            if (MoveCalculator.isOutOfBounds(newPosition) || board.getPiece(newPosition) != null) {
+                continue;
+            }
+
+            board.addPiece(newPosition, new ChessPiece(kingTeam, ChessPiece.PieceType.KING));
+        }
+
+        return board;
+    }
+
+
+    /**
+     * Finds where on the board a specified king is
+     * @param teamColor - which color of king to look for
+     * @return the position of the specified king color on the board
+     */
+    private ChessPosition getKingPosition(TeamColor teamColor) {
+        ChessPiece king = new ChessPiece(teamColor, ChessPiece.PieceType.KING);
+
+        ArrayList<ChessPosition> positions = board.getPositionArray(king);
+
+        return positions.getLast();
+    }
+
+    /**
+     * Determines if a given space could be captured by an enemy piece
+     * @param teamColor - which team to check
+     * @param position - chess position to check
+     * @return True if the specified position can be captured by an enemy piece
+     */
+    private boolean enemyCanCapture(ChessBoard board, TeamColor teamColor, ChessPosition position) {
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
                 ChessPosition currentPosition = new ChessPosition(i, j);
                 ChessPiece currentPiece = board.getPiece(currentPosition);
 
                 if (currentPiece != null && currentPiece.getTeamColor() != teamColor) {
-                    Collection<ChessMove> moves = currentPiece.pieceMoves(board, currentPosition);
+                    ChessPiece.PieceType pieceType = currentPiece.getPieceType();
+                    Collection<ChessMove> moves;
+
+                    // if currentPiece is a bounded piece, use the kingBoard to check if a piece can capture the king
+                    // else use the current board
+                    if (pieceType == ChessPiece.PieceType.KING || pieceType == ChessPiece.PieceType.KNIGHT ||
+                            pieceType == ChessPiece.PieceType.PAWN) {
+                        moves = currentPiece.pieceMoves(board, currentPosition);
+                    } else {
+                        moves = currentPiece.pieceMoves(this.board, currentPosition);
+                    }
+
                     for (ChessMove move : moves) {
                         ChessPosition endPosition = move.getEndPosition();
                         if (endPosition.equals(position)) {
@@ -157,19 +223,6 @@ public class ChessGame {
         }
 
         return false;
-    }
-
-
-
-    /**
-     * Determines if the given team is in stalemate, which here is defined as having
-     * no valid moves
-     *
-     * @param teamColor which team to check for stalemate
-     * @return True if the specified team is in stalemate, otherwise false
-     */
-    public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
     }
 
     /**
