@@ -194,29 +194,28 @@ public class ChessGame {
      * @return True if the specified position can be captured by an enemy piece
      */
     private boolean enemyCanCapture(ChessBoard board, TeamColor teamColor, ChessPosition position) {
-        for (int i = 1; i < 9; i++) {
-            for (int j = 1; j < 9; j++) {
-                ChessPosition currentPosition = new ChessPosition(i, j);
-                ChessPiece currentPiece = board.getPiece(currentPosition);
+        HashMap<ChessPiece, ArrayList<ChessPosition>> piecesMap = this.board.getPieces();
 
-                if (currentPiece != null && currentPiece.getTeamColor() != teamColor) {
-                    ChessPiece.PieceType pieceType = currentPiece.getPieceType();
-                    Collection<ChessMove> moves;
+        for (ChessPiece piece : piecesMap.keySet()) {
+            if (piece.getTeamColor() == teamColor) {
+                continue;
+            }
+            ChessPiece.PieceType pieceType = piece.getPieceType();
 
-                    // if currentPiece is a bounded piece, use the kingBoard to check if a piece can capture the king
-                    // else use the current board
-                    if (pieceType == ChessPiece.PieceType.KING || pieceType == ChessPiece.PieceType.KNIGHT ||
-                            pieceType == ChessPiece.PieceType.PAWN) {
-                        moves = currentPiece.pieceMoves(board, currentPosition);
-                    } else {
-                        moves = currentPiece.pieceMoves(this.board, currentPosition);
-                    }
-
-                    for (ChessMove move : moves) {
-                        ChessPosition endPosition = move.getEndPosition();
-                        if (endPosition.equals(position)) {
-                            return true;
-                        }
+            for (ChessPosition piecePosition : piecesMap.get(piece)) {
+                Collection<ChessMove> moves;
+                // if currentPiece is a bounded piece, use the kingBoard to check if a piece can capture the king
+                // else use the current board
+                if (pieceType == ChessPiece.PieceType.KING || pieceType == ChessPiece.PieceType.KNIGHT ||
+                        pieceType == ChessPiece.PieceType.PAWN) {
+                    moves = piece.pieceMoves(board, piecePosition);
+                } else {
+                    moves = piece.pieceMoves(this.board, piecePosition);
+                }
+                for (ChessMove move : moves) {
+                    ChessPosition endPosition = move.getEndPosition();
+                    if (endPosition.equals(position)) {
+                        return true;
                     }
                 }
             }
