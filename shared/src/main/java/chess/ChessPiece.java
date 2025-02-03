@@ -42,7 +42,7 @@ public class ChessPiece {
 
     @Override
     public String toString() {
-        if (pieceColor == ChessGame.TeamColor.WHITE) {
+        if (pieceColor == ChessGame.TeamColor.BLACK) {
             return String.valueOf(Character.toLowerCase(type.getCharValue()));
         }
 
