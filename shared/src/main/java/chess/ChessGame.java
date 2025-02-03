@@ -1,10 +1,6 @@
 package chess;
 
-import chess.moves.MoveCalculator;
-
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -126,7 +122,20 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingPosition = getKingPosition(teamColor);
 
-        return enemyCanCapture(teamColor, kingPosition);
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                ChessPiece currPiece = board.getPiece(new ChessPosition(i, j));
+                if (currPiece == null || currPiece.getTeamColor() == teamColor) {
+                    continue;
+                }
+                for (ChessMove move : currPiece.pieceMoves(board, new ChessPosition(i, j))) {
+                    if (move.getEndPosition().equals(kingPosition)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 
@@ -140,10 +149,7 @@ public class ChessGame {
         if (!isInCheck(teamColor)) {
             return false;
         }
-
-
-
-        return true;
+        return isNoValidMovesLeft(teamColor);
     }
 
     /**
@@ -157,6 +163,11 @@ public class ChessGame {
         if (isInCheck(teamColor)) {
             return false;
         }
+        return isNoValidMovesLeft(teamColor);
+
+    }
+
+    private boolean isNoValidMovesLeft(TeamColor teamColor) {
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
                 ChessPosition position = new ChessPosition(i, j);
@@ -173,23 +184,6 @@ public class ChessGame {
             }
         }
         return true;
-    }
-
-    private boolean enemyCanCapture(TeamColor teamColor, ChessPosition position) {
-        for (int i = 1; i <= 8; i++) {
-            for (int j = 1; j <= 8; j++) {
-                ChessPiece currPiece = board.getPiece(new ChessPosition(i, j));
-                if (currPiece == null || currPiece.getTeamColor() == teamColor) {
-                    continue;
-                }
-                for (ChessMove move : currPiece.pieceMoves(board, new ChessPosition(i, j))) {
-                    if (move.getEndPosition().equals(position)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     private ChessPosition getKingPosition(TeamColor teamColor) {
