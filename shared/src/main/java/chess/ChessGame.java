@@ -137,6 +137,12 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+        if (!isInCheck(teamColor)) {
+            return false;
+        }
+
+
+
         return true;
     }
 
@@ -148,7 +154,25 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (isInCheck(teamColor)) {
+            return false;
+        }
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                ChessPosition position = new ChessPosition(i, j);
+
+                // if there are any moves then it's not stalemate
+                Collection<ChessMove> moves = validMoves(position);
+
+                // if position piece == null or if piece teamColor != teamColor skip
+                if (board.getPiece(position) != null && board.getPiece(position).getTeamColor() == teamColor) {
+                    if (!moves.isEmpty()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     private boolean enemyCanCapture(TeamColor teamColor, ChessPosition position) {
