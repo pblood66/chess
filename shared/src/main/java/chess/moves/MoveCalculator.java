@@ -6,7 +6,7 @@ public abstract class MoveCalculator implements Calculable {
     protected ChessBoard board;
     protected ChessPosition position;
     protected ChessGame.TeamColor pieceColor;
-    protected int[][] PATHS;
+    protected int[][] paths;
 
     // for all PieceType
     protected ChessMove calculateSingleMove(ChessPosition currPosition, int[] path) {
@@ -34,7 +34,9 @@ public abstract class MoveCalculator implements Calculable {
         if (row > 8 || row < 1) {
             return true;
         }
-        else return col > 8 || col < 1;
+        else {
+            return col > 8 || col < 1;
+        }
     }
 
 }

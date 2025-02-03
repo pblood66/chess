@@ -64,11 +64,6 @@ public class ChessBoard implements Cloneable {
         board[position.getArrayRow()][position.getArrayCol()] = piece;
     }
 
-    public void removePiece(ChessPosition position) {
-        ChessPiece tempPiece = board[position.getArrayRow()][position.getArrayCol()];
-        board[position.getArrayRow()][position.getArrayCol()] = null;
-    }
-
     /**
      * Gets a chess piece on the chessboard
      *

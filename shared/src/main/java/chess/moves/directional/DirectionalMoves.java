@@ -13,7 +13,7 @@ public abstract class DirectionalMoves extends MoveCalculator {
     public HashSet<ChessMove> pieceMoves() {
         HashSet<ChessMove> moves = new HashSet<>();
 
-        for (int[] path : PATHS) {
+        for (int[] path : paths) {
             moves.addAll(calculateDirection(path));
         }
 

@@ -60,7 +60,7 @@ public class ChessGame {
 
         ChessBoard copy = board.clone();
         Collection<ChessMove> possibleMoves = currentPiece.pieceMoves(board, startPosition);
-        Collection<ChessMove> validMoves = new HashSet<ChessMove>();
+        Collection<ChessMove> validMoves = new HashSet<>();
 
         for (ChessMove move : possibleMoves) {
             board.addPiece(move.getEndPosition(), currentPiece);
@@ -174,8 +174,7 @@ public class ChessGame {
 
                 // if there are any moves then it's not stalemate
                 Collection<ChessMove> moves = validMoves(position);
-
-                // if position piece == null or if piece teamColor != teamColor skip
+                
                 if (board.getPiece(position) != null && board.getPiece(position).getTeamColor() == teamColor) {
                     if (!moves.isEmpty()) {
                         return false;

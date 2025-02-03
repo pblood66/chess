@@ -8,6 +8,6 @@ public class KingMoves extends BoundedMoves{
         this.board = board;
         this.position = position;
         this.pieceColor = board.getPiece(position).getTeamColor();
-        this.PATHS = new int[][] {{1,1}, {1,-1}, {-1, 1}, {-1, -1}, {1, 0}, {0,1}, {-1, 0}, {0, -1}};
+        this.paths = new int[][] {{1,1}, {1,-1}, {-1, 1}, {-1, -1}, {1, 0}, {0,1}, {-1, 0}, {0, -1}};
     }
 }

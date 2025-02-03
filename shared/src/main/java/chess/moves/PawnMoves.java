@@ -13,7 +13,7 @@ public class PawnMoves extends MoveCalculator {
         this.position = position;
         this.pieceColor = board.getPiece(position).getTeamColor();
         this.direction = (this.pieceColor == ChessGame.TeamColor.WHITE) ? 1 : -1;
-        this.PATHS = new int[][] {{this.direction, 0}, {this.direction * 2, 0}};
+        this.paths = new int[][] {{this.direction, 0}, {this.direction * 2, 0}};
     }
 
     public HashSet<ChessMove> pieceMoves() {
@@ -33,19 +33,21 @@ public class PawnMoves extends MoveCalculator {
         HashSet<ChessMove> moves = new HashSet<>();
 
         if (isOnStart()) {
-            for (int[] path : PATHS) {
+            for (int[] path : paths) {
                 ChessMove potentialMove = calculateSingleMove(position, path);
                 ChessPiece potentialPiece = board.getPiece(potentialMove.getEndPosition());
 
                 if (potentialPiece == null) {
                     moves.add(potentialMove);
                 }
-                else break;
+                else {
+                    break;
+                }
             }
         }
         else {
             for (PieceType promotion : promotionType) {
-                ChessMove potentialMove = calculateSingleMove(position, PATHS[0], promotion);
+                ChessMove potentialMove = calculateSingleMove(position, paths[0], promotion);
                 ChessPiece potentialPiece = board.getPiece(potentialMove.getEndPosition());
 
                 if (potentialPiece == null) {
@@ -92,14 +94,18 @@ public class PawnMoves extends MoveCalculator {
         if (pieceColor == ChessGame.TeamColor.WHITE && position.getRow() == 2) {
             return true;
         }
-        else return pieceColor == ChessGame.TeamColor.BLACK && position.getRow() == 7;
+        else {
+            return pieceColor == ChessGame.TeamColor.BLACK && position.getRow() == 7;
+        }
     }
 
     private boolean canPromote() {
         if (pieceColor == ChessGame.TeamColor.WHITE && position.getRow() == 7) {
             return true;
         }
-        else return pieceColor == ChessGame.TeamColor.BLACK && position.getRow() == 2;
+        else {
+            return pieceColor == ChessGame.TeamColor.BLACK && position.getRow() == 2;
+        }
     }
 
 }

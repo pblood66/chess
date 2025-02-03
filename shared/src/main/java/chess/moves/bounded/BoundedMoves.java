@@ -11,7 +11,7 @@ public abstract class BoundedMoves extends MoveCalculator {
     public HashSet<ChessMove> pieceMoves() {
         HashSet<ChessMove> moves = new HashSet<>();
 
-        for (int[] path : PATHS) {
+        for (int[] path : paths) {
             ChessMove potentialMove = calculateSingleMove(position, path);
             ChessPosition newPosition = potentialMove.getEndPosition();
 
