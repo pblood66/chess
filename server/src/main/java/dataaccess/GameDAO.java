@@ -4,12 +4,13 @@ import chess.ChessGame;
 import models.AuthData;
 import models.GameData;
 
-import java.util.List;
+import java.util.Collection;
 
 public interface GameDAO {
-    int createGame(String gameName, int gameID) throws DataAccessException;
-    List<GameData> listGames() throws DataAccessException;
+    int createGame(GameData game) throws DataAccessException;
+    Collection<GameData> listGames();
     GameData getGame(int gameID) throws DataAccessException;
-    void updateGame(AuthData authData, ChessGame.TeamColor playerColor, int gameID) throws DataAccessException;
+    void removeGame(int gameID) throws DataAccessException;
+    void updateGame(GameData game) throws DataAccessException;
     void clear();
 }

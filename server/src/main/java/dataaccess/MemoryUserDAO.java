@@ -32,6 +32,7 @@ public class MemoryUserDAO implements UserDAO {
         users.add(user);
     }
 
+
     @Override
     public void clear() {
         users.clear();

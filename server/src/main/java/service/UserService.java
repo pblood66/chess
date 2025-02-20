@@ -3,6 +3,8 @@ package service;
 import dataaccess.*;
 import models.AuthData;
 import models.UserData;
+import service.requests.*;
+import service.results.*;
 
 import java.util.UUID;
 
@@ -43,6 +45,17 @@ public class UserService {
         authDAO.createAuth(auth);
 
         return new LoginResult(request.username(), auth.authToken());
+    }
+
+    public void logout(LogoutRequest request) throws DataAccessException {
+        String token = request.authToken();
+        try {
+            AuthData auth = authDAO.getAuth(token);
+            authDAO.deleteAuth(token);
+
+        } catch (DataAccessException e) {
+            throw new UnauthoriedException("Error: unauthorized");
+        }
     }
 
 }

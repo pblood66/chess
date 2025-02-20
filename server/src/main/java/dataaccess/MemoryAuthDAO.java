@@ -13,7 +13,7 @@ public class MemoryAuthDAO implements AuthDAO {
     @Override
     public AuthData getAuth(String authToken) throws DataAccessException {
         for (AuthData authData : database) {
-            if (authData.username().equals(authToken)) {
+            if (authData.authToken().equals(authToken)) {
                 return authData;
             }
         }
@@ -29,12 +29,17 @@ public class MemoryAuthDAO implements AuthDAO {
     @Override
     public void deleteAuth(String AuthToken) throws DataAccessException {
         for (AuthData authData : database) {
-            if (authData.username().equals(AuthToken)) {
+            if (authData.authToken().equals(AuthToken)) {
                 database.remove(authData);
                 return;
             }
         }
         throw new DataAccessException("No such auth token");
+    }
+
+    @Override
+    public int size() {
+        return database.size();
     }
 
     @Override
