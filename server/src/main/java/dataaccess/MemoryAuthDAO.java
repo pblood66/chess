@@ -1,5 +1,6 @@
 package dataaccess;
 
+import dataaccess.exceptions.DataAccessException;
 import models.AuthData;
 
 import java.util.HashSet;
@@ -18,7 +19,7 @@ public class MemoryAuthDAO implements AuthDAO {
             }
         }
 
-        throw new DataAccessException("No such auth token");
+        throw new DataAccessException("Error: unauthorized");
     }
 
     @Override

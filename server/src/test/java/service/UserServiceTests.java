@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.*;
+import dataaccess.exceptions.DataAccessException;
 import org.junit.jupiter.api.*;
 import service.requests.LoginRequest;
 import service.requests.LogoutRequest;
@@ -35,7 +36,7 @@ public class UserServiceTests {
 
     @Test
     @Order(2)
-    public void RegisterNegativeTest() throws DataAccessException {
+    public void RegisterNegativeTest()  {
         RegisterRequest request = new RegisterRequest("pblood66", "", "");
         Assertions.assertThrows(DataAccessException.class, () -> userService.register(request));
     }
@@ -54,14 +55,14 @@ public class UserServiceTests {
 
     @Test
     @Order(4)
-    public void LoginNegativeTest() throws DataAccessException {
+    public void LoginNegativeTest() {
         LoginRequest login = new LoginRequest("pblood66", "error");
         Assertions.assertThrows(DataAccessException.class, () -> userService.login(login));
     }
 
     @Test
     @Order(5)
-    void LogoutNegativeTest() throws DataAccessException {
+    void LogoutNegativeTest() {
         LogoutRequest request = new LogoutRequest("error");
         Assertions.assertThrows(DataAccessException.class, () -> userService.logout(request));
     }

@@ -1,7 +1,6 @@
 package dataaccess;
 
-import chess.ChessGame;
-import models.AuthData;
+import dataaccess.exceptions.DataAccessException;
 import models.GameData;
 
 import java.util.Collection;
@@ -15,14 +14,8 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public int createGame(GameData game) throws DataAccessException {
-        try {
-            getGame(game.gameID());
-            database.add(game);
-        }
-        catch (DataAccessException e) {
-            throw new DataAccessException("Game: " + game.gameID() + " already exists");
-        }
+    public int createGame(GameData game) {
+        database.add(game);
 
         return game.gameID();
     }
@@ -58,6 +51,11 @@ public class MemoryGameDAO implements GameDAO {
     public void updateGame(GameData game) throws DataAccessException {
         removeGame(game.gameID());
         database.add(game);
+    }
+
+    @Override
+    public int size() {
+        return database.size();
     }
 
     @Override
