@@ -35,7 +35,7 @@ public class UserService {
 
     public LoginResult login(LoginRequest request) throws DataAccessException {
         UserData user = userDAO.getUser(request.username());
-        if (!user.username().equals(request.username()) || !request.password().equals(request.password())) {
+        if (!user.username().equals(request.username()) || !user.password().equals(request.password())) {
             throw new UnauthoriedException("Error: unauthorized");
         }
 
