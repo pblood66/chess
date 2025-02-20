@@ -8,31 +8,41 @@ import java.util.UUID;
 
 public class UserService {
 
-    private UserDAO userDAO;
-    private AuthDAO authDAO;
+    private final UserDAO userDAO;
+    private final AuthDAO authDAO;
 
-    RegisterResult register(RegisterRequest request) throws BadRequestException {
-        try {
-            if (userDAO.getUser(request.username()) != null) {
-                throw new BadRequestException("Error: already taken");
-            }
-            UserData newUser = new UserData(request.username(), request.password(), request.email());
-            userDAO.createUser(newUser);
+    public UserService(UserDAO userDAO, AuthDAO authDAO) {
+        this.userDAO = userDAO;
+        this.authDAO = authDAO;
+    }
 
-            String authToken = UUID.randomUUID().toString();
-            AuthData authData = new AuthData(authToken, request.username());
-            authDAO.createAuth(authData);
-
-            return new RegisterResult(request.username(), authToken);
-        } catch (DataAccessException e) {
-            throw new BadRequestException(e.getMessage());
+    public RegisterResult register(RegisterRequest request) throws DataAccessException {
+        if (request.username() == null || request.password() == null || request.email() == null
+                || request.username().isEmpty() || request.password().isEmpty() || request.email().isEmpty()) {
+            throw new BadRequestException("Error: bad request");
         }
+        if (userDAO.getUser(request.username()) != null) {
+            throw new DuplicatedException("Error: already taken");
+        }
+
+        userDAO.createUser(new UserData(request.username(), request.password(), request.email()));
+
+        AuthData auth = new AuthData(UUID.randomUUID().toString(), request.username());
+        authDAO.createAuth(auth);
+
+        return new RegisterResult(request.username(), auth.authToken());
     }
 
+    public LoginResult login(LoginRequest request) throws DataAccessException {
+        UserData user = userDAO.getUser(request.username());
+        if (!user.username().equals(request.username()) || !request.password().equals(request.password())) {
+            throw new UnauthoriedException("Error: unauthorized");
+        }
 
+        AuthData auth = new AuthData(UUID.randomUUID().toString(), request.username());
+        authDAO.createAuth(auth);
 
-    void clear() {
-        userDAO.clear();
-        authDAO.clear();
+        return new LoginResult(request.username(), auth.authToken());
     }
+
 }
