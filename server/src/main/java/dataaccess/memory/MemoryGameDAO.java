@@ -1,5 +1,6 @@
-package dataaccess;
+package dataaccess.memory;
 
+import dataaccess.GameDAO;
 import dataaccess.exceptions.DataAccessException;
 import models.GameData;
 
