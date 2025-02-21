@@ -6,7 +6,10 @@ import dataaccess.GameDAO;
 import dataaccess.UnauthoriedException;
 import dataaccess.exceptions.BadRequestException;
 import dataaccess.exceptions.DataAccessException;
+import dataaccess.exceptions.DuplicatedException;
+import models.AuthData;
 import models.GameData;
+import service.requests.JoinGameRequest;
 import service.requests.ListGamesRequest;
 import service.requests.CreateGameRequest;
 import service.results.CreateGameResult;
@@ -25,6 +28,38 @@ public class GameService {
         currentGameId = 0;
     }
 
+
+    public void joinGame(JoinGameRequest request) throws DataAccessException{
+        String authToken = request.authToken();
+        int gameID = request.gameID();
+        ChessGame.TeamColor playerColor = request.playerColor();
+        AuthData auth = authDAO.getAuth(authToken);
+        GameData game = gameDAO.getGame(gameID);
+
+        String username = auth.username();
+
+        if (!isColorAvailable(game, playerColor)) {
+            throw new DuplicatedException("Error: already taken");
+        }
+
+        GameData updatedGame;
+        if (playerColor == ChessGame.TeamColor.WHITE) {
+            updatedGame = game.setWhiteUsername(username);
+        }
+        else {
+            updatedGame = game.setBlackUsername(username);
+        }
+
+        gameDAO.updateGame(updatedGame);
+
+    }
+
+    public boolean isColorAvailable(GameData game, ChessGame.TeamColor playerColor) {
+        if (playerColor == ChessGame.TeamColor.WHITE) {
+            return game.whiteUsername() == null;
+        }
+        return game.blackUsername() == null;
+    }
 
     public CreateGameResult createGame(CreateGameRequest request) throws DataAccessException {
         String gameName = request.gameName();
@@ -50,14 +85,10 @@ public class GameService {
 
     public ListGamesResult listGames(ListGamesRequest request) throws DataAccessException {
         String token = request.authToken();
-        try {
-            authDAO.getAuth(token);
-            Collection<GameData> games = gameDAO.listGames();
+        authDAO.getAuth(token);
+        Collection<GameData> games = gameDAO.listGames();
 
-            return new ListGamesResult(games);
-        } catch (DataAccessException e) {
-            throw new UnauthoriedException("Error: unauthorized");
-        }
+        return new ListGamesResult(games);
     }
 
 }
