@@ -4,6 +4,8 @@ import chess.ChessGame;
 import dataaccess.*;
 import dataaccess.exceptions.DataAccessException;
 import dataaccess.exceptions.DuplicatedException;
+import dataaccess.memory.MemoryAuthDAO;
+import dataaccess.memory.MemoryGameDAO;
 import models.AuthData;
 import models.GameData;
 import org.junit.jupiter.api.Assertions;
@@ -15,8 +17,6 @@ import service.requests.JoinGameRequest;
 import service.requests.ListGamesRequest;
 import service.results.CreateGameResult;
 import service.results.ListGamesResult;
-
-import java.util.Collection;
 
 public class GameServiceTests {
     private static GameDAO gameDAO;

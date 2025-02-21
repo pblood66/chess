@@ -2,6 +2,8 @@ package service;
 
 import dataaccess.*;
 import dataaccess.exceptions.DataAccessException;
+import dataaccess.memory.MemoryAuthDAO;
+import dataaccess.memory.MemoryUserDAO;
 import org.junit.jupiter.api.*;
 import service.requests.LoginRequest;
 import service.requests.LogoutRequest;
