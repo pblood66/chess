@@ -1,6 +1,5 @@
 package dataaccess;
 
-import dataaccess.exceptions.DataAccessException;
 import models.UserData;
 
 import java.util.HashSet;
@@ -24,12 +23,7 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     @Override
-    public UserData authenticateUser(String username, String password) throws DataAccessException {
-        return null;
-    }
-
-    @Override
-    public void createUser(UserData user) throws DataAccessException {
+    public void createUser(UserData user) {
         users.add(user);
     }
 
