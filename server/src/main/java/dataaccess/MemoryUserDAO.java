@@ -33,6 +33,10 @@ public class MemoryUserDAO implements UserDAO {
         users.add(user);
     }
 
+    @Override
+    public int size() {
+        return users.size();
+    }
 
     @Override
     public void clear() {
