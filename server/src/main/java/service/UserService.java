@@ -55,14 +55,13 @@ public class UserService {
     }
 
     public void logout(LogoutRequest request) throws DataAccessException {
-        String token = request.authToken();
+//        String token = request.authToken();
         try {
-            AuthData auth = authDAO.getAuth(token);
-            authDAO.deleteAuth(token);
+            authDAO.getAuth(request.authToken());
+            authDAO.deleteAuth(request.authToken());
 
         } catch (DataAccessException e) {
             throw new UnauthoriedException("Error: unauthorized");
         }
     }
-
 }

@@ -6,6 +6,7 @@ import dataaccess.exceptions.DataAccessException;
 import dataaccess.exceptions.DuplicatedException;
 import service.UserService;
 import service.requests.LoginRequest;
+import service.requests.LogoutRequest;
 import service.requests.RegisterRequest;
 import service.results.LoginResult;
 import service.results.RegisterResult;
@@ -26,8 +27,6 @@ public class UserHandler {
         RegisterResult result = userService.register(registerRequest);
         String jsonResult = gson.toJson(result);
 
-        System.out.println(jsonResult);
-
         res.status(200);
         return jsonResult;
     }
@@ -38,6 +37,17 @@ public class UserHandler {
 
         res.status(200);
         return new Gson().toJson(result);
+    }
+
+    public Object logout(Request req, Response res) throws Exception {
+        LogoutRequest request = new LogoutRequest(req.headers("Authorization"));
+        System.out.println(request.authToken());
+
+        userService.logout(request);
+
+        res.status(200);
+
+        return "{}";
     }
 
 //    public Object login(Request req, Response res) throws Exception {

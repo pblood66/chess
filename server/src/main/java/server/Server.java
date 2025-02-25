@@ -51,6 +51,7 @@ public class Server {
         Spark.delete("/db", clearHandler::clear);
         Spark.post("/user", userHandler::register);
         Spark.post("/session", userHandler::login);
+        Spark.delete("/session", userHandler::logout);
 
 
         // Exception Handling
@@ -67,7 +68,7 @@ public class Server {
         Spark.exception(UnauthoriedException.class,
                 (exception, request, response) -> {
             response.status(401);
-            response.body(new Gson().toJson(exception.getMessage()));
+            response.body(exception.getMessage());
                 });
         Spark.exception(Exception.class, (exception, request, response) -> {
             response.status(500);
