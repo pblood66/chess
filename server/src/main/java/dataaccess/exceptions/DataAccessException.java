@@ -8,17 +8,17 @@ import java.util.Map;
  * Indicates there was an error connecting to the database
  */
 public class DataAccessException extends Exception{
-    private static final int statusCode = 400;
+    private static final int StatusCode = 400;
 
     public DataAccessException(String message) {
         super(message);
     }
 
     public String toJson() {
-        return new Gson().toJson(Map.of("message", getMessage(), "status", statusCode));
+        return new Gson().toJson(Map.of("message", getMessage(), "status", StatusCode));
     }
 
     public int getStatusCode() {
-        return statusCode;
+        return StatusCode;
     }
 }

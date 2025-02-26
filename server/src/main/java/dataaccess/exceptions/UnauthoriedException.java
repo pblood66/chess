@@ -5,17 +5,17 @@ import com.google.gson.Gson;
 import java.util.Map;
 
 public class UnauthoriedException extends DataAccessException {
-    private static final int statusCode = 401;
+    private static final int StatusCode = 401;
 
     public UnauthoriedException(String message) {
         super(message);
     }
 
     public String toJson() {
-        return new Gson().toJson(Map.of("message", getMessage(), "status", statusCode));
+        return new Gson().toJson(Map.of("message", getMessage(), "status", StatusCode));
     }
 
     public int getStatusCode() {
-        return statusCode;
+        return StatusCode;
     }
 }

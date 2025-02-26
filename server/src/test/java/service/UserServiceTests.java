@@ -26,7 +26,7 @@ public class UserServiceTests {
 
     @Test
     @Order(1)
-    public void RegisterPositiveTest() throws DataAccessException {
+    public void registerPositiveTest() throws DataAccessException {
         RegisterRequest request = new RegisterRequest("pblood66", "test", "test");
         RegisterResult result = userService.register(request);
 
@@ -38,14 +38,14 @@ public class UserServiceTests {
 
     @Test
     @Order(2)
-    public void RegisterNegativeTest()  {
+    public void registerNegativeTest()  {
         RegisterRequest request = new RegisterRequest("pblood66", "", "");
         Assertions.assertThrows(DataAccessException.class, () -> userService.register(request));
     }
 
     @Test
     @Order(3)
-    public void LoginPositiveTest() throws DataAccessException {
+    public void loginPositiveTest() throws DataAccessException {
         LoginRequest login = new LoginRequest("pblood66", "test");
         LoginResult result = userService.login(login);
 
@@ -57,21 +57,21 @@ public class UserServiceTests {
 
     @Test
     @Order(4)
-    public void LoginNegativeTest() {
+    public void loginNegativeTest() {
         LoginRequest login = new LoginRequest("pblood66", "error");
         Assertions.assertThrows(DataAccessException.class, () -> userService.login(login));
     }
 
     @Test
     @Order(5)
-    void LogoutNegativeTest() {
+    void logoutNegativeTest() {
         LogoutRequest request = new LogoutRequest("error");
         Assertions.assertThrows(DataAccessException.class, () -> userService.logout(request));
     }
 
     @Test
     @Order(6)
-    void LogoutPositiveTest() throws DataAccessException {
+    void logoutPositiveTest() throws DataAccessException {
         LogoutRequest request = new LogoutRequest(token);
 
         Assertions.assertEquals(1, authDAO.size());
