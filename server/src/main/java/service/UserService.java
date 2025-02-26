@@ -45,6 +45,9 @@ public class UserService {
             throw new BadRequestException("Error: bad request");
         }
         UserData user = userDAO.getUser(request.username());
+        if (user == null) {
+            throw new UnauthoriedException("Error: unauthorized");
+        }
         if (!user.username().equals(request.username()) || !user.password().equals(request.password())) {
             throw new UnauthoriedException("Error: unauthorized");
         }

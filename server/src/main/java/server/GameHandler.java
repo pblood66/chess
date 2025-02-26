@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.exceptions.BadRequestException;
 import service.GameService;
 import service.requests.CreateGameRequest;
 import service.requests.JoinGameRequest;
@@ -45,7 +46,12 @@ public class GameHandler {
 
     public Object joinGame(Request req, Response res) throws Exception {
         String authToken = req.headers("Authorization");
+
         JoinGameRequest request = new Gson().fromJson(req.body(), JoinGameRequest.class);
+
+        if ( request.playerColor() == null || request.playerColor().isEmpty()) {
+            throw new BadRequestException("error: bad request");
+        }
 
         request = request.setAuthToken(authToken);
 

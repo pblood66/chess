@@ -1,6 +1,7 @@
 package dataaccess.memory;
 
 import dataaccess.GameDAO;
+import dataaccess.exceptions.BadRequestException;
 import dataaccess.exceptions.DataAccessException;
 import models.GameData;
 
@@ -34,7 +35,7 @@ public class MemoryGameDAO implements GameDAO {
             }
         }
 
-        throw new DataAccessException("Game: " + gameID + " not found");
+        throw new BadRequestException("Error: bad request");
     }
 
     @Override

@@ -32,7 +32,7 @@ public class GameService {
     public void joinGame(JoinGameRequest request) throws DataAccessException{
         String authToken = request.authToken();
         int gameID = request.gameID();
-        ChessGame.TeamColor playerColor = request.playerColor();
+        String playerColor = request.playerColor();
         AuthData auth = authDAO.getAuth(authToken);
         GameData game = gameDAO.getGame(gameID);
 
@@ -43,19 +43,21 @@ public class GameService {
         }
 
         GameData updatedGame;
-        if (playerColor == ChessGame.TeamColor.WHITE) {
+        if (playerColor.equals("WHITE")) {
             updatedGame = game.setWhiteUsername(username);
         }
-        else {
+        else if (playerColor.equals("BLACK")) {
             updatedGame = game.setBlackUsername(username);
+        } else {
+            throw new BadRequestException("Error: bad request");
         }
 
         gameDAO.updateGame(updatedGame);
 
     }
 
-    public boolean isColorAvailable(GameData game, ChessGame.TeamColor playerColor) {
-        if (playerColor == ChessGame.TeamColor.WHITE) {
+    public boolean isColorAvailable(GameData game, String playerColor) throws DataAccessException {
+        if (playerColor.equals("WHITE")) {
             return game.whiteUsername() == null;
         }
         return game.blackUsername() == null;

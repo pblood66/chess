@@ -60,7 +60,7 @@ public class GameServiceTests {
     @Test
     @Order(3)
     void joinGamePositiveTest() throws DataAccessException {
-        JoinGameRequest request = new JoinGameRequest(auth.authToken(), ChessGame.TeamColor.WHITE, 1);
+        JoinGameRequest request = new JoinGameRequest(auth.authToken(), "WHITE", 1);
         gameService.joinGame(request);
 
         GameData game = gameDAO.getGame(1);
@@ -71,7 +71,7 @@ public class GameServiceTests {
     @Test
     @Order(4)
     void joinGameNegativeTest() throws DataAccessException {
-        JoinGameRequest request = new JoinGameRequest(auth.authToken(), ChessGame.TeamColor.WHITE, 1);
+        JoinGameRequest request = new JoinGameRequest(auth.authToken(), "WHITE", 1);
 
         Assertions.assertThrows(DuplicatedException.class, () -> gameService.joinGame(request));
     }

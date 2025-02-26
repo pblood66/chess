@@ -8,7 +8,7 @@ import java.util.Map;
  * Indicates there was an error connecting to the database
  */
 public class DataAccessException extends Exception{
-    private static final int statusCode = 500;
+    private static final int statusCode = 400;
 
     public DataAccessException(String message) {
         super(message);

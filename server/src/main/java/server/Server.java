@@ -18,30 +18,22 @@ import spark.*;
 
 public class Server {
 
-    private final AuthDAO authDAO;
-    private final GameDAO gameDAO;
-    private final UserDAO userDAO;
-
-    private final ClearService clearService;
-    private final UserService userService;
-    private final GameService gameService;
-
     private final ClearHandler clearHandler;
     private final UserHandler userHandler;
     private final GameHandler gameHandler;
 
     public Server() {
-        authDAO = new MemoryAuthDAO();
-        gameDAO = new MemoryGameDAO();
-        userDAO = new MemoryUserDAO();
+        AuthDAO authDAO = new MemoryAuthDAO();
+        GameDAO gameDAO = new MemoryGameDAO();
+        UserDAO userDAO = new MemoryUserDAO();
 
-        clearService = new ClearService(gameDAO, userDAO, authDAO);
+        ClearService clearService = new ClearService(gameDAO, userDAO, authDAO);
         clearHandler = new ClearHandler(clearService);
 
-        userService = new UserService(userDAO, authDAO);
+        UserService userService = new UserService(userDAO, authDAO);
         userHandler = new UserHandler(userService);
 
-        gameService = new GameService(gameDAO, authDAO);
+        GameService gameService = new GameService(gameDAO, authDAO);
         gameHandler = new GameHandler(gameService);
     }
 
