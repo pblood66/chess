@@ -4,6 +4,7 @@ import dataaccess.*;
 import dataaccess.exceptions.BadRequestException;
 import dataaccess.exceptions.DataAccessException;
 import dataaccess.exceptions.DuplicatedException;
+import dataaccess.exceptions.UnauthoriedException;
 import models.AuthData;
 import models.UserData;
 import service.requests.*;

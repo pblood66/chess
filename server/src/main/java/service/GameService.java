@@ -3,7 +3,7 @@ package service;
 import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
-import dataaccess.UnauthoriedException;
+import dataaccess.exceptions.UnauthoriedException;
 import dataaccess.exceptions.BadRequestException;
 import dataaccess.exceptions.DataAccessException;
 import dataaccess.exceptions.DuplicatedException;

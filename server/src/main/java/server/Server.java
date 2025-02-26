@@ -3,7 +3,8 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
-import dataaccess.UnauthoriedException;
+import dataaccess.exceptions.DataAccessException;
+import dataaccess.exceptions.UnauthoriedException;
 import dataaccess.UserDAO;
 import dataaccess.exceptions.BadRequestException;
 import dataaccess.exceptions.DuplicatedException;
@@ -57,27 +58,16 @@ public class Server {
         Spark.delete("/session", userHandler::logout);
 
         Spark.post("/game", gameHandler::createGame);
+        Spark.get("/game", gameHandler::listGames);
+        Spark.put("/game", gameHandler::joinGame);
+
 
 
         // Exception Handling
-        Spark.exception(BadRequestException.class,
-                (exception, request, response) -> {
-            response.status(400);
-            response.body(new Gson().toJson(exception.getMessage()));
-                });
-        Spark.exception(DuplicatedException.class,
-                (exception, request, response) -> {
-            response.status(403);
-            response.body(new Gson().toJson(exception.getMessage()));
-                });
-        Spark.exception(UnauthoriedException.class,
-                (exception, request, response) -> {
-            response.status(401);
-            response.body(exception.getMessage());
-                });
+        Spark.exception(DataAccessException.class, this::exceptionHandler);
         Spark.exception(Exception.class, (exception, request, response) -> {
             response.status(500);
-            response.body(new Gson().toJson(exception.getMessage()));
+            response.body(new Gson().toJson(exception));
                 });
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
@@ -90,5 +80,10 @@ public class Server {
     public void stop() {
         Spark.stop();
         Spark.awaitStop();
+    }
+
+    private void exceptionHandler(DataAccessException exception, Request request, Response response) {
+        response.status(exception.getStatusCode());
+        response.body(exception.toJson());
     }
 }
