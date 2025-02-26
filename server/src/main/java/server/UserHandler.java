@@ -49,22 +49,4 @@ public class UserHandler {
 
         return "{}";
     }
-
-//    public Object login(Request req, Response res) throws Exception {
-//        LoginRequest request = new Gson().fromJson(req.body(), LoginRequest.class);
-//
-//        try {
-//            LoginResult result = userService.login(request);
-//            String jsonResult = new Gson().toJson(result);
-//            res.status(200);
-//
-//            return jsonResult;
-//        } catch(BadRequestException e) {
-//
-//        }
-//
-//
-//        return "";
-//    }
-
 }

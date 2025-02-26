@@ -27,6 +27,7 @@ public class Server {
 
     private final ClearHandler clearHandler;
     private final UserHandler userHandler;
+    private final GameHandler gameHandler;
 
     public Server() {
         authDAO = new MemoryAuthDAO();
@@ -40,6 +41,7 @@ public class Server {
         userHandler = new UserHandler(userService);
 
         gameService = new GameService(gameDAO, authDAO);
+        gameHandler = new GameHandler(gameService);
     }
 
     public int run(int desiredPort) {
@@ -49,9 +51,12 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", clearHandler::clear);
+
         Spark.post("/user", userHandler::register);
         Spark.post("/session", userHandler::login);
         Spark.delete("/session", userHandler::logout);
+
+        Spark.post("/game", gameHandler::createGame);
 
 
         // Exception Handling
