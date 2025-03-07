@@ -5,7 +5,9 @@ import dataaccess.DatabaseManager;
 import dataaccess.UserDAO;
 import dataaccess.exceptions.DataAccessException;
 import models.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
+import javax.xml.crypto.Data;
 import java.sql.SQLException;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
@@ -21,7 +23,7 @@ public class MySQLUserDAO implements UserDAO {
     }
 
     @Override
-    public void createUser(UserData user) throws DataAccessException{
+    public void createUser(UserData user) throws DataAccessException {
 
     }
 
@@ -33,6 +35,19 @@ public class MySQLUserDAO implements UserDAO {
     @Override
     public void clear() {
 
+    }
+
+    private String hashUserPassword(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt());
+    }
+
+    private boolean verifyUser(String username, String password) throws DataAccessException {
+        String hashedPassword = getHashedPassword(username);
+        return BCrypt.checkpw(password, hashedPassword);
+    }
+
+    private String getHashedPassword(String username) throws DataAccessException {
+        return null;
     }
 
     private final String[] createStatements = {
