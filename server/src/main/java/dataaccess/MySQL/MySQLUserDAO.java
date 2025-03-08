@@ -11,7 +11,17 @@ import java.sql.SQLException;
 public class MySQLUserDAO implements UserDAO {
     public MySQLUserDAO() {
         try {
-            configureDatabase();
+            String[] tableStatements = {
+                    """
+            CREATE TABLE IF NOT EXISTS users (
+            username VARCHAR(20) NOT NULL,
+            password VARCHAR(255) NOT NULL,
+            email VARCHAR(255),
+            PRIMARY KEY (username)
+            )
+            """
+            };
+            DatabaseManager.configureDatabase(tableStatements);
         } catch (DataAccessException ex) {
             throw new RuntimeException(ex);
         }
@@ -85,28 +95,5 @@ public class MySQLUserDAO implements UserDAO {
         }
     }
 
-    private final String[] createStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS users (
-            username VARCHAR(255) NOT NULL,
-            password VARCHAR(255) NOT NULL,
-            email VARCHAR(255),
-            PRIMARY KEY (username)
-            )
-            """
-    };
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException("Could not configure database: " + ex.getMessage());
-        }
-    }
 }
 

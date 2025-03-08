@@ -106,4 +106,17 @@ public class DatabaseManager {
             throw new DataAccessException(ex.getMessage());
         }
     }
+
+    public static void configureDatabase(String[] createStatements) throws DataAccessException{
+        DatabaseManager.createDatabase();
+        try (var conn = DatabaseManager.getConnection()) {
+            for (var statement : createStatements) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("Could not configure database: " + ex.getMessage());
+        }
+    }
 }

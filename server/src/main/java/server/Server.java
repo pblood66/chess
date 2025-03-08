@@ -4,11 +4,9 @@ import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import dataaccess.MySQL.MySQLUserDAO;
+import dataaccess.MySQL.MySqlAuthDAO;
 import dataaccess.exceptions.DataAccessException;
-import dataaccess.exceptions.UnauthoriedException;
 import dataaccess.UserDAO;
-import dataaccess.exceptions.BadRequestException;
-import dataaccess.exceptions.DuplicatedException;
 import dataaccess.memory.MemoryAuthDAO;
 import dataaccess.memory.MemoryGameDAO;
 import dataaccess.memory.MemoryUserDAO;
@@ -25,7 +23,7 @@ public class Server {
 
     public Server() {
 
-        AuthDAO authDAO = new MemoryAuthDAO();
+        AuthDAO authDAO = new MySqlAuthDAO();
         GameDAO gameDAO = new MemoryGameDAO();
         UserDAO userDAO = new MySQLUserDAO();
 
