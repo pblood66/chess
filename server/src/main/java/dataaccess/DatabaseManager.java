@@ -1,9 +1,12 @@
 package dataaccess;
 
+import dataaccess.exceptions.BadRequestException;
 import dataaccess.exceptions.DataAccessException;
 
 import java.sql.*;
 import java.util.Properties;
+
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class DatabaseManager {
     private static final String DATABASE_NAME;
@@ -69,6 +72,38 @@ public class DatabaseManager {
             return conn;
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
+        }
+    }
+
+    public static void executeUpdate(String statement, Object... params) throws DataAccessException {
+        try (var connection = DatabaseManager.getConnection()) {
+            try (var ps = connection.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                for (int i = 0; i < params.length; i++) {
+                    var param = params[i];
+                    if (param instanceof String) ps.setString(i + 1, (String) param);
+                }
+
+                ps.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            throw new BadRequestException("Could not execute SQL statement: " + statement);
+        }
+    }
+
+    public static ResultSet executeQuery(String statement, Object... params) throws DataAccessException {
+        try (var connection = DatabaseManager.getConnection()) {
+            try (var ps = connection.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                for (int i = 0; i < params.length; i++) {
+                    var param = params[i];
+                    if (param instanceof String) {
+                        ps.setString(i + 1, (String) param);
+                    }
+                }
+
+                return ps.executeQuery();
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException(ex.getMessage());
         }
     }
 }

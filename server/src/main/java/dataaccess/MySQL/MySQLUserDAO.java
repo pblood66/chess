@@ -1,18 +1,12 @@
 package dataaccess.MySQL;
 
-import com.google.gson.Gson;
 import dataaccess.DatabaseManager;
 import dataaccess.UserDAO;
-import dataaccess.exceptions.BadRequestException;
 import dataaccess.exceptions.DataAccessException;
+import dataaccess.exceptions.DuplicatedException;
 import models.UserData;
 import org.mindrot.jbcrypt.BCrypt;
-
-import javax.xml.crypto.Data;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class MySQLUserDAO implements UserDAO {
     public MySQLUserDAO() {
@@ -26,7 +20,7 @@ public class MySQLUserDAO implements UserDAO {
     @Override
     public UserData getUser(String username) {
         var statement = "SELECT * FROM users WHERE username = ?";
-        try (var result = executeQuery(statement, username)) {
+        try (var result = DatabaseManager.executeQuery(statement, username)) {
             result.next();
             String password = result.getString("password");
             String email = result.getString("email");
@@ -40,47 +34,20 @@ public class MySQLUserDAO implements UserDAO {
     @Override
     public void createUser(UserData user) throws DataAccessException {
         var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
-        executeUpdate(statement, user.username(), user.password(), user.email());
+        try {
+            DatabaseManager.executeUpdate(statement, user.username(), user.password(), user.email());
+        } catch (DataAccessException ex) {
+            throw new DuplicatedException("Error: already taken");
+        }
         System.out.println("Created user: " + user.username());
     }
 
-    private ResultSet executeQuery(String statement, Object... params) throws DataAccessException {
-        try (var connection = DatabaseManager.getConnection()) {
-            try (var ps = connection.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                for (int i = 0; i < params.length; i++) {
-                    var param = params[i];
-                    if (param instanceof String) {
-                        ps.setString(i + 1, (String) param);
-                    }
-                }
-
-                return ps.executeQuery();
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException(ex.getMessage());
-        }
-    }
-
-    private void executeUpdate(String statement, Object... params) throws DataAccessException {
-        try (var connection = DatabaseManager.getConnection()) {
-            try (var ps = connection.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                for (int i = 0; i < params.length; i++) {
-                    var param = params[i];
-                    if (param instanceof String) ps.setString(i + 1, (String) param);
-                }
-
-                ps.executeUpdate();
-            }
-        } catch (SQLException ex) {
-            throw new BadRequestException("Could not execute SQL statement: " + statement);
-        }
-    }
 
     @Override
     public int size() {
         var statement = "SELECT COUNT(*) FROM users";
 
-        try (var result = executeQuery(statement)) {
+        try (var result = DatabaseManager.executeQuery(statement)) {
             result.next();
             return result.getInt(1);
         } catch (DataAccessException | SQLException ex) {
@@ -92,7 +59,7 @@ public class MySQLUserDAO implements UserDAO {
     public void clear() {
         try {
             var statement = "TRUNCATE TABLE users";
-            executeUpdate(statement);
+            DatabaseManager.executeUpdate(statement);
         } catch (DataAccessException ex) {
             throw new RuntimeException(ex.getMessage());
         }
@@ -102,13 +69,20 @@ public class MySQLUserDAO implements UserDAO {
         return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
-    private boolean verifyUser(String username, String password) throws DataAccessException {
+    public boolean verifyUser(String username, String password) throws DataAccessException {
         String hashedPassword = getHashedPassword(username);
         return BCrypt.checkpw(password, hashedPassword);
     }
 
     private String getHashedPassword(String username) throws DataAccessException {
-        return null;
+        var statement = "SELECT password FROM users WHERE username = ?";
+
+        try (var result = DatabaseManager.executeQuery(statement, username)) {
+            result.next();
+            return result.getString(1);
+        } catch (SQLException ex) {
+            return null;
+        }
     }
 
     private final String[] createStatements = {
