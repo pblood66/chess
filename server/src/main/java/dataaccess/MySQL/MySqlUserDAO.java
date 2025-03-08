@@ -8,8 +8,8 @@ import models.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 import java.sql.SQLException;
 
-public class MySQLUserDAO implements UserDAO {
-    public MySQLUserDAO() {
+public class MySqlUserDAO implements UserDAO {
+    public MySqlUserDAO() {
         try {
             String[] tableStatements = {
                     """
