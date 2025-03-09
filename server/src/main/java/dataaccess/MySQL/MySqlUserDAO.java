@@ -30,12 +30,14 @@ public class MySqlUserDAO implements UserDAO {
     @Override
     public UserData getUser(String username) {
         var statement = "SELECT * FROM users WHERE username = ?";
-        try (var result = DatabaseManager.executeQuery(statement, username)) {
-            result.next();
-            String password = result.getString("password");
-            String email = result.getString("email");
+        try (var connection = DatabaseManager.getConnection()) {
+            try (var result = DatabaseManager.executeQuery(connection, statement, username)) {
+                result.next();
+                String password = result.getString("password");
+                String email = result.getString("email");
 
-            return new UserData(username, password, email);
+                return new UserData(username, password, email);
+            }
         } catch (DataAccessException | SQLException ex) {
             return null;
         }
@@ -56,10 +58,11 @@ public class MySqlUserDAO implements UserDAO {
     @Override
     public int size() {
         var statement = "SELECT COUNT(*) FROM users";
-
-        try (var result = DatabaseManager.executeQuery(statement)) {
-            result.next();
-            return result.getInt(1);
+        try (var connection = DatabaseManager.getConnection()) {
+            try (var result = DatabaseManager.executeQuery(connection, statement)) {
+                result.next();
+                return result.getInt(1);
+            }
         } catch (DataAccessException | SQLException ex) {
             throw new RuntimeException(ex.getMessage());
         }
@@ -87,9 +90,11 @@ public class MySqlUserDAO implements UserDAO {
     private String getHashedPassword(String username) throws DataAccessException {
         var statement = "SELECT password FROM users WHERE username = ?";
 
-        try (var result = DatabaseManager.executeQuery(statement, username)) {
-            result.next();
-            return result.getString(1);
+        try (var connection = DatabaseManager.getConnection()) {
+            try (var result = DatabaseManager.executeQuery(connection, statement, username)) {
+                result.next();
+                return result.getString(1);
+            }
         } catch (SQLException ex) {
             return null;
         }

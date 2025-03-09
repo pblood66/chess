@@ -4,10 +4,10 @@ import com.google.gson.Gson;
 
 import java.util.Map;
 
-public class UnauthoriedException extends DataAccessException {
+public class UnauthorizedException extends DataAccessException {
     private static final int STATUS_CODE = 401;
 
-    public UnauthoriedException(String message) {
+    public UnauthorizedException(String message) {
         super(message);
     }
 

@@ -90,20 +90,18 @@ public class DatabaseManager {
         }
     }
 
-    public static ResultSet executeQuery(String statement, Object... params) throws DataAccessException {
-        try (var connection = DatabaseManager.getConnection()) {
-            try (var ps = connection.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                for (int i = 0; i < params.length; i++) {
-                    var param = params[i];
-                    if (param instanceof String) {
-                        ps.setString(i + 1, (String) param);
-                    }
+    public static ResultSet executeQuery(Connection connection,
+                                         String statement, Object... params) throws DataAccessException {
+        try {
+            var ps = connection.prepareStatement(statement);
+            for (int i = 0; i < params.length; i++) {
+                if (params[i] instanceof String) {
+                    ps.setString(i + 1, (String) params[i]);
                 }
-
-                return ps.executeQuery();
             }
+            return ps.executeQuery();
         } catch (SQLException ex) {
-            throw new DataAccessException(ex.getMessage());
+            throw new BadRequestException("Could not execute SQL statement: " + statement);
         }
     }
 

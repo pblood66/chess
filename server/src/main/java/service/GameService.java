@@ -3,7 +3,7 @@ package service;
 import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
-import dataaccess.exceptions.UnauthoriedException;
+import dataaccess.exceptions.UnauthorizedException;
 import dataaccess.exceptions.BadRequestException;
 import dataaccess.exceptions.DataAccessException;
 import dataaccess.exceptions.DuplicatedException;
@@ -80,7 +80,7 @@ public class GameService {
             return new CreateGameResult(currentGameId);
 
         } catch (DataAccessException e) {
-            throw new UnauthoriedException(e.getMessage());
+            throw new UnauthorizedException(e.getMessage());
         }
     }
 

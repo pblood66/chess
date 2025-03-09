@@ -4,9 +4,10 @@ import dataaccess.AuthDAO;
 import dataaccess.DatabaseManager;
 import dataaccess.exceptions.BadRequestException;
 import dataaccess.exceptions.DataAccessException;
-import dataaccess.exceptions.UnauthoriedException;
+import dataaccess.exceptions.UnauthorizedException;
 import models.AuthData;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 public class MySqlAuthDAO implements AuthDAO {
@@ -30,15 +31,19 @@ public class MySqlAuthDAO implements AuthDAO {
 
     @Override
     public AuthData getAuth(String authToken) throws DataAccessException {
-        var statement = "SELECT * FROM auth WHERE authToken = ?";
+        String statement = "SELECT username FROM auth WHERE authToken = ?";
 
-        try (var result = DatabaseManager.executeQuery(statement, authToken)) {
-            result.next();
-            String username = result.getString("username");
+        try (var connection = DatabaseManager.getConnection();
+             var result = DatabaseManager.executeQuery(connection, statement, authToken)) {
 
-            return new AuthData(authToken, username);
+            if (result.next()) { // Ensure a row exists
+                String username = result.getString("username");
+                return new AuthData(authToken, username);
+            } else {
+                throw new UnauthorizedException("Invalid auth token.");
+            }
         } catch (SQLException ex) {
-            throw new UnauthoriedException("Error: unauthorized");
+            throw new DataAccessException("Error: " + ex.getMessage());
         }
     }
 
@@ -63,6 +68,7 @@ public class MySqlAuthDAO implements AuthDAO {
 
         try {
             DatabaseManager.executeUpdate(statement, authToken);
+            System.out.println("Deleted auth token: " + authToken);
         } catch (DataAccessException ex) {
             throw new BadRequestException("Error deleting auth token");
         }
@@ -72,9 +78,11 @@ public class MySqlAuthDAO implements AuthDAO {
     public int size() {
         var statement = "SELECT COUNT(*) FROM auth";
 
-        try (var result = DatabaseManager.executeQuery(statement)) {
-            result.next();
-            return result.getInt(1);
+        try (var connection = DatabaseManager.getConnection()) {
+            try (var result = DatabaseManager.executeQuery(connection, statement)) {
+                result.next();
+                return result.getInt(1);
+            }
         } catch (DataAccessException | SQLException ex) {
             throw new RuntimeException(ex.getMessage());
         }

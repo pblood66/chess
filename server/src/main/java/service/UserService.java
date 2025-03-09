@@ -4,7 +4,7 @@ import dataaccess.*;
 import dataaccess.exceptions.BadRequestException;
 import dataaccess.exceptions.DataAccessException;
 import dataaccess.exceptions.DuplicatedException;
-import dataaccess.exceptions.UnauthoriedException;
+import dataaccess.exceptions.UnauthorizedException;
 import models.AuthData;
 import models.UserData;
 import service.requests.*;
@@ -46,10 +46,10 @@ public class UserService {
         }
         UserData user = userDAO.getUser(request.username());
         if (user == null) {
-            throw new UnauthoriedException("Error: unauthorized");
+            throw new UnauthorizedException("Error: unauthorized");
         }
         if (!user.username().equals(request.username()) || !user.password().equals(request.password())) {
-            throw new UnauthoriedException("Error: unauthorized");
+            throw new UnauthorizedException("Error: unauthorized");
         }
 
         AuthData auth = new AuthData(UUID.randomUUID().toString(), request.username());
@@ -65,7 +65,7 @@ public class UserService {
             authDAO.deleteAuth(request.authToken());
 
         } catch (DataAccessException e) {
-            throw new UnauthoriedException("Error: unauthorized");
+            throw new UnauthorizedException("Error: unauthorized");
         }
     }
 }

@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
+import dataaccess.MySQL.MySqlGameDAO;
 import dataaccess.MySQL.MySqlUserDAO;
 import dataaccess.MySQL.MySqlAuthDAO;
 import dataaccess.exceptions.DataAccessException;
@@ -22,7 +23,7 @@ public class Server {
     public Server() {
 
         AuthDAO authDAO = new MySqlAuthDAO();
-        GameDAO gameDAO = new MemoryGameDAO();
+        GameDAO gameDAO = new MySqlGameDAO();
         UserDAO userDAO = new MySqlUserDAO();
 
         ClearService clearService = new ClearService(gameDAO, userDAO, authDAO);
