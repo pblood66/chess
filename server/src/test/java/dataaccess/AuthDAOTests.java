@@ -9,7 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 public class AuthDAOTests {
-    private AuthDAO getDataAccess(Class<? extends AuthDAO> databaseClass) throws DataAccessException {
+    private AuthDAO getDataAccess(Class<? extends AuthDAO> databaseClass) {
         AuthDAO db;
         if (databaseClass.equals(MySqlAuthDAO.class)) {
             db = new MySqlAuthDAO();
