@@ -46,8 +46,9 @@ public class MySqlUserDAO implements UserDAO {
     @Override
     public void createUser(UserData user) throws DataAccessException {
         var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+        String hashedPassword = UserDAO.hashUserPassword(user.password());
         try {
-            DatabaseManager.executeUpdate(statement, user.username(), user.password(), user.email());
+            DatabaseManager.executeUpdate(statement, user.username(), hashedPassword, user.email());
         } catch (DataAccessException ex) {
             throw new DuplicatedException("Error: already taken");
         }
@@ -78,16 +79,12 @@ public class MySqlUserDAO implements UserDAO {
         }
     }
 
-    private String hashUserPassword(String password) {
-        return BCrypt.hashpw(password, BCrypt.gensalt());
-    }
-
     public boolean verifyUser(String username, String password) throws DataAccessException {
         String hashedPassword = getHashedPassword(username);
         return BCrypt.checkpw(password, hashedPassword);
     }
 
-    private String getHashedPassword(String username) throws DataAccessException {
+    public String getHashedPassword(String username) throws DataAccessException {
         var statement = "SELECT password FROM users WHERE username = ?";
 
         try (var connection = DatabaseManager.getConnection()) {

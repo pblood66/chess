@@ -48,7 +48,7 @@ public class UserService {
         if (user == null) {
             throw new UnauthorizedException("Error: unauthorized");
         }
-        if (!user.username().equals(request.username()) || !user.password().equals(request.password())) {
+        if (!userDAO.verifyUser(user.username(), request.password())) {
             throw new UnauthorizedException("Error: unauthorized");
         }
 
