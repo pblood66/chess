@@ -2,6 +2,7 @@ package dataaccess;
 
 import chess.ChessGame;
 import dataaccess.MySQL.MySqlGameDAO;
+import dataaccess.exceptions.DataAccessException;
 import dataaccess.memory.MemoryGameDAO;
 import models.GameData;
 import org.junit.jupiter.api.Assertions;
@@ -39,6 +40,22 @@ public class GameDAOTests {
     void createGameNegativeTest(Class<? extends GameDAO> databaseClass) {
         GameDAO db = getDataAccess(databaseClass);
 
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = {MySqlGameDAO.class, MemoryGameDAO.class})
+    void updateGamePositiveTest(Class<? extends GameDAO> databaseClass) throws DataAccessException {
+        GameDAO db = getDataAccess(databaseClass);
+
+        GameData game = new GameData(1, null, null,
+                "testGame", new ChessGame());
+
+        db.createGame(game);
+
+        GameData updatedGame = new GameData(1, "User", "",
+                "testGame", new ChessGame());
+        Assertions.assertDoesNotThrow(() -> db.updateGame(updatedGame));
+        Assertions.assertEquals(1, db.size());
     }
 
 

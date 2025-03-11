@@ -1,5 +1,6 @@
 package dataaccess.MySQL;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.DatabaseManager;
 import dataaccess.GameDAO;
@@ -7,8 +8,10 @@ import dataaccess.exceptions.BadRequestException;
 import dataaccess.exceptions.DataAccessException;
 import models.GameData;
 
+import javax.xml.crypto.Data;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 public class MySqlGameDAO implements GameDAO {
@@ -43,7 +46,7 @@ public class MySqlGameDAO implements GameDAO {
 
         try {
             DatabaseManager.executeUpdate(statement, game.gameID(), whiteUsername,
-                    blackUsername, game.gameName(), new Gson().toJson(game));
+                    blackUsername, game.gameName(), serializeGame(game.game()));
 
             return game.gameID();
         } catch (DataAccessException ex) {
@@ -53,22 +56,65 @@ public class MySqlGameDAO implements GameDAO {
 
     @Override
     public Collection<GameData> listGames() {
-        return List.of();
+        HashSet<GameData> games = new HashSet<>();
+        var statement = "SELECT * FROM games";
+        try (var conn = DatabaseManager.getConnection()) {
+            var result = DatabaseManager.executeQuery(conn, statement);
+            while (result.next()) {
+                int gameId = result.getInt("gameId");
+                String whiteUsername = result.getString("whiteUsername");
+                String blackUsername = result.getString("blackUsername");
+                String gameName = result.getString("gameName");
+                ChessGame game =  deserializeGame(result.getString("game"));
+
+                games.add(new GameData(gameId, whiteUsername, blackUsername, gameName, game));
+            }
+
+            return games;
+        } catch(DataAccessException | SQLException ex) {
+            return null;
+        }
     }
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
-        return null;
+        var statement = "SELECT * FROM games WHERE gameId = ?";
+        try (var conn = DatabaseManager.getConnection()) {
+            var result = DatabaseManager.executeQuery(conn, statement, gameID);
+
+            String whiteUsername = result.getString("whiteUsername");
+            String blackUsername = result.getString("blackUsername");
+            String gameName = result.getString("gameName");
+            ChessGame game = deserializeGame(result.getString("game"));
+            return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
+
+        } catch (DataAccessException | SQLException ex) {
+            throw new BadRequestException("Error: bad request");
+        }
     }
 
     @Override
     public void removeGame(int gameID) throws DataAccessException {
-
+        var statement = "DELETE FROM games WHERE gameId = ?";
+        try {
+            DatabaseManager.executeUpdate(statement, gameID);
+        } catch (DataAccessException ex) {
+            throw new DataAccessException(ex.getMessage());
+        }
     }
 
     @Override
     public void updateGame(GameData game) throws DataAccessException {
+        String whiteUsername = game.whiteUsername() == null ? "" : game.whiteUsername();
+        String blackUsername = game.blackUsername() == null ? "" : game.blackUsername();
 
+        try {
+            var statement = "UPDATE games SET whiteUsername=?, blackUsername=?, gameName=?, game=? WHERE gameID=?";
+            DatabaseManager.executeUpdate(statement, whiteUsername, blackUsername, game.gameName(),
+                    serializeGame(game.game()), game.gameID());
+        } catch (DataAccessException ex) {
+            throw new DataAccessException(ex.getMessage());
+        }
     }
 
     @Override
@@ -92,5 +138,13 @@ public class MySqlGameDAO implements GameDAO {
         } catch (DataAccessException ex) {
             throw new RuntimeException(ex.getMessage());
         }
+    }
+
+    private String serializeGame(ChessGame game) {
+        return new Gson().toJson(game);
+    }
+
+    private ChessGame deserializeGame(String serializedGame) {
+        return new Gson().fromJson(serializedGame, ChessGame.class);
     }
 }
