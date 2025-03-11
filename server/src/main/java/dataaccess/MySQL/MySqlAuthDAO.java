@@ -40,7 +40,7 @@ public class MySqlAuthDAO implements AuthDAO {
                 String username = result.getString("username");
                 return new AuthData(authToken, username);
             } else {
-                throw new UnauthorizedException("Invalid auth token.");
+                throw new UnauthorizedException("Error: Invalid auth token.");
             }
         } catch (SQLException ex) {
             throw new DataAccessException("Error: " + ex.getMessage());

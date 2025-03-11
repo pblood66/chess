@@ -50,7 +50,7 @@ public class MySqlGameDAO implements GameDAO {
 
             return game.gameID();
         } catch (DataAccessException ex) {
-            throw new DataAccessException(ex.getMessage());
+            throw new DataAccessException("Error: " + ex.getMessage());
         }
     }
 
@@ -64,6 +64,10 @@ public class MySqlGameDAO implements GameDAO {
                 int gameId = result.getInt("gameId");
                 String whiteUsername = result.getString("whiteUsername");
                 String blackUsername = result.getString("blackUsername");
+
+                whiteUsername = whiteUsername.isEmpty() ? null : whiteUsername;
+                blackUsername = blackUsername.isEmpty() ? null : blackUsername;
+
                 String gameName = result.getString("gameName");
                 ChessGame game =  deserializeGame(result.getString("game"));
 

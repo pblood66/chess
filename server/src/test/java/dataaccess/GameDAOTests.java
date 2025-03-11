@@ -28,8 +28,12 @@ public class GameDAOTests {
     void createGamePositiveTest(Class<? extends GameDAO> databaseClass) {
         GameDAO db = getDataAccess(databaseClass);
 
-        GameData game = new GameData(1, null,
-                null, "testGame", new ChessGame());
+        GameData game = new GameData(
+                1,
+                null,
+                null,
+                "testGame",
+                new ChessGame());
 
         Assertions.assertDoesNotThrow(() -> db.createGame(game));
         Assertions.assertEquals(1, db.size());
@@ -40,7 +44,12 @@ public class GameDAOTests {
     void createGameNegativeTest(Class<? extends GameDAO> databaseClass) {
         GameDAO db = getDataAccess(databaseClass);
 
-        GameData game = new GameData(0, null, null, null, null);
+        GameData game = new GameData(
+                0,
+                null,
+                null,
+                null,
+                null);
 
         Assertions.assertThrows(DataAccessException.class, () -> db.createGame(game));
 
@@ -51,13 +60,22 @@ public class GameDAOTests {
     void updateGamePositiveTest(Class<? extends GameDAO> databaseClass) throws DataAccessException {
         GameDAO db = getDataAccess(databaseClass);
 
-        GameData game = new GameData(1, null, null,
-                "testGame", new ChessGame());
+        GameData game = new GameData(
+                1,
+                null,
+                null,
+                "testGame",
+                new ChessGame());
 
         db.createGame(game);
 
-        GameData updatedGame = new GameData(1, "User", "",
-                "testGame", new ChessGame());
+        GameData updatedGame = new GameData(
+                1,
+                "User",
+                "",
+                "testGame",
+                new ChessGame());
+
         Assertions.assertDoesNotThrow(() -> db.updateGame(updatedGame));
         Assertions.assertEquals(1, db.size());
     }
@@ -83,8 +101,11 @@ public class GameDAOTests {
     @ValueSource(classes = {MySqlGameDAO.class, MemoryGameDAO.class})
     void getGamePositiveTest(Class<? extends GameDAO> databaseClass) throws DataAccessException {
         GameDAO db = getDataAccess(databaseClass);
-        GameData game = new GameData(1, "", "",
-                "testGame", new ChessGame());
+        GameData game = new GameData(1,
+                "Hello",
+                "",
+                "testGame",
+                new ChessGame());
 
         db.createGame(game);
 
@@ -103,6 +124,19 @@ public class GameDAOTests {
         GameDAO db = getDataAccess(databaseClass);
 
         Assertions.assertThrows(DataAccessException.class, () -> db.getGame(0));
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = {MySqlGameDAO.class, MemoryGameDAO.class})
+    void clearGamePositiveTest(Class<? extends GameDAO> databaseClass) throws DataAccessException {
+        GameDAO db = getDataAccess(databaseClass);
+        GameData game = new GameData(
+                1,
+                "Hello",
+                "",
+                "testGame",
+                new ChessGame());
+
     }
 
 }
