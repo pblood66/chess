@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.Collection;
+
 public class GameDAOTests {
     private GameDAO getDataAccess(Class<? extends GameDAO> databaseClass) {
         GameDAO db;
@@ -124,6 +126,68 @@ public class GameDAOTests {
         GameDAO db = getDataAccess(databaseClass);
 
         Assertions.assertThrows(DataAccessException.class, () -> db.getGame(0));
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = {MySqlGameDAO.class, MemoryGameDAO.class})
+    void removeGamePositiveTest(Class<? extends GameDAO> databaseClass) throws DataAccessException {
+        GameDAO db = getDataAccess(databaseClass);
+        GameData game = new GameData(
+                1,
+                "Hello",
+                "",
+                "testGame",
+                new ChessGame()
+        );
+
+        db.createGame(game);
+        Assertions.assertDoesNotThrow(() -> db.removeGame(game.gameID()));
+
+        Assertions.assertEquals(0, db.size());
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = {MySqlGameDAO.class, MemoryGameDAO.class})
+    void removeGameNegativeTest(Class<? extends GameDAO> databaseClass) throws DataAccessException {
+        GameDAO db = getDataAccess(databaseClass);
+        Assertions.assertThrows(DataAccessException.class, () -> db.removeGame(0));
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = {MySqlGameDAO.class, MemoryGameDAO.class})
+    void listGamesPositiveTest(Class<? extends GameDAO> databaseClass) throws DataAccessException {
+        GameDAO db = getDataAccess(databaseClass);
+        GameData game = new GameData(
+                1,
+                "Hello",
+                "",
+                "testGame",
+                new ChessGame());
+
+        db.createGame(game);
+        game = new GameData(
+                2,
+                "Hello",
+                "",
+                "testGame2",
+                new ChessGame());
+        db.createGame(game);
+
+        Collection<GameData> result = db.listGames();
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(2, result.size());
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = {MySqlGameDAO.class, MemoryGameDAO.class})
+    void listGamesEmptyTest(Class<? extends GameDAO> databaseClass) throws DataAccessException {
+        GameDAO db = getDataAccess(databaseClass);
+
+        Collection<GameData> result = db.listGames();
+
+        Assertions.assertTrue(result.isEmpty());
+
     }
 
     @ParameterizedTest

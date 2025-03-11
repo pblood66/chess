@@ -118,6 +118,7 @@ public class MySqlGameDAO implements GameDAO {
     public void removeGame(int gameId) throws DataAccessException {
         var statement = "DELETE FROM games WHERE gameId = ?";
         try {
+            getGame(gameId);
             DatabaseManager.executeUpdate(statement, gameId);
         } catch (DataAccessException ex) {
             throw new DataAccessException(ex.getMessage());

@@ -2,6 +2,8 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.*;
+import dataaccess.MySQL.MySqlAuthDAO;
+import dataaccess.MySQL.MySqlGameDAO;
 import dataaccess.exceptions.DataAccessException;
 import dataaccess.exceptions.DuplicatedException;
 import dataaccess.memory.MemoryAuthDAO;
@@ -26,8 +28,10 @@ public class GameServiceTests {
 
     @BeforeAll
     static void setUp() {
-        gameDAO = new MemoryGameDAO();
-        authDAO = new MemoryAuthDAO();
+        gameDAO = new MySqlGameDAO();
+        gameDAO.clear();
+        authDAO = new MySqlAuthDAO();
+        authDAO.clear();
         gameService = new GameService(gameDAO, authDAO);
 
         auth = new AuthData("token", "pblood66");
