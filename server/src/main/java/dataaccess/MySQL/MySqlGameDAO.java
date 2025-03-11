@@ -126,6 +126,8 @@ public class MySqlGameDAO implements GameDAO {
         String blackUsername = game.blackUsername() == null ? "" : game.blackUsername();
 
         try {
+            GameData select = getGame(game.gameID());
+
             var statement = "UPDATE games SET whiteUsername=?, blackUsername=?, gameName=?, game=? WHERE gameId=?";
             DatabaseManager.executeUpdate(statement, whiteUsername, blackUsername, game.gameName(),
                     serializeGame(game.game()), game.gameID());

@@ -67,6 +67,15 @@ public class GameDAOTests {
     void updateGameNegativeTest(Class<? extends GameDAO> databaseClass) throws DataAccessException {
         GameDAO db = getDataAccess(databaseClass);
 
+        GameData update = new GameData(
+                1,
+                "Hello",
+                "",
+                "testGame",
+                new ChessGame()
+        );
+
+        Assertions.assertThrows(DataAccessException.class, () -> db.updateGame(update));
 
     }
 
@@ -86,6 +95,14 @@ public class GameDAOTests {
         Assertions.assertEquals(game.gameName(), result.gameName());
         Assertions.assertEquals(game.whiteUsername(), result.whiteUsername());
         Assertions.assertEquals(game.blackUsername(), result.blackUsername());
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = {MySqlGameDAO.class, MemoryGameDAO.class})
+    void getGameNegativeTest(Class<? extends GameDAO> databaseClass) throws DataAccessException {
+        GameDAO db = getDataAccess(databaseClass);
+
+        Assertions.assertThrows(DataAccessException.class, () -> db.getGame(0));
     }
 
 }
