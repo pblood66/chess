@@ -1,7 +1,7 @@
 package dataaccess;
 
 import chess.ChessGame;
-import dataaccess.MySQL.MySqlGameDAO;
+import dataaccess.mysql.MySqlGameDAO;
 import dataaccess.exceptions.DataAccessException;
 import dataaccess.memory.MemoryGameDAO;
 import models.GameData;

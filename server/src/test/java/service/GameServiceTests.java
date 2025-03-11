@@ -1,13 +1,10 @@
 package service;
 
-import chess.ChessGame;
 import dataaccess.*;
-import dataaccess.MySQL.MySqlAuthDAO;
-import dataaccess.MySQL.MySqlGameDAO;
+import dataaccess.mysql.MySqlAuthDAO;
+import dataaccess.mysql.MySqlGameDAO;
 import dataaccess.exceptions.DataAccessException;
 import dataaccess.exceptions.DuplicatedException;
-import dataaccess.memory.MemoryAuthDAO;
-import dataaccess.memory.MemoryGameDAO;
 import models.AuthData;
 import models.GameData;
 import org.junit.jupiter.api.Assertions;

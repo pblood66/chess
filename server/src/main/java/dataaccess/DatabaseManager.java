@@ -80,8 +80,12 @@ public class DatabaseManager {
             try (var ps = connection.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (int i = 0; i < params.length; i++) {
                     var param = params[i];
-                    if (param instanceof String) ps.setString(i + 1, (String) param);
-                    if (param instanceof Integer) ps.setInt(i + 1, (Integer) param);
+                    if (param instanceof String) {
+                        ps.setString(i + 1, (String) param);
+                    }
+                    if (param instanceof Integer) {
+                        ps.setInt(i + 1, (Integer) param);
+                    }
                 }
 
                 ps.executeUpdate();

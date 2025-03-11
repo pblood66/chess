@@ -1,6 +1,6 @@
 package dataaccess;
 
-import dataaccess.MySQL.MySqlUserDAO;
+import dataaccess.mysql.MySqlUserDAO;
 import dataaccess.exceptions.DataAccessException;
 import dataaccess.memory.MemoryUserDAO;
 import models.UserData;

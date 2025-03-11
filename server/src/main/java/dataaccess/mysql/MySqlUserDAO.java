@@ -1,4 +1,4 @@
-package dataaccess.MySQL;
+package dataaccess.mysql;
 
 import dataaccess.DatabaseManager;
 import dataaccess.UserDAO;

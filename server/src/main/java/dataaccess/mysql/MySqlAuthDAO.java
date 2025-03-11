@@ -1,4 +1,4 @@
-package dataaccess.MySQL;
+package dataaccess.mysql;
 
 import dataaccess.AuthDAO;
 import dataaccess.DatabaseManager;
@@ -7,7 +7,6 @@ import dataaccess.exceptions.DataAccessException;
 import dataaccess.exceptions.UnauthorizedException;
 import models.AuthData;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 public class MySqlAuthDAO implements AuthDAO {

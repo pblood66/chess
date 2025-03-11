@@ -1,18 +1,15 @@
-package dataaccess.MySQL;
+package dataaccess.mysql;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.DatabaseManager;
 import dataaccess.GameDAO;
-import dataaccess.exceptions.BadRequestException;
 import dataaccess.exceptions.DataAccessException;
 import models.GameData;
 
-import javax.xml.crypto.Data;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 
 public class MySqlGameDAO implements GameDAO {
     public MySqlGameDAO() {
