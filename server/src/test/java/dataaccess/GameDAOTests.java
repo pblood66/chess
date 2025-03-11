@@ -36,9 +36,13 @@ public class GameDAOTests {
     }
 
     @ParameterizedTest
-    @ValueSource(classes = {MySqlGameDAO.class, MemoryGameDAO.class})
+    @ValueSource(classes = {MySqlGameDAO.class})
     void createGameNegativeTest(Class<? extends GameDAO> databaseClass) {
         GameDAO db = getDataAccess(databaseClass);
+
+        GameData game = new GameData(0, null, null, null, null);
+
+        Assertions.assertThrows(DataAccessException.class, () -> db.createGame(game));
 
     }
 
@@ -58,5 +62,30 @@ public class GameDAOTests {
         Assertions.assertEquals(1, db.size());
     }
 
+    @ParameterizedTest
+    @ValueSource(classes = {MySqlGameDAO.class, MemoryGameDAO.class})
+    void updateGameNegativeTest(Class<? extends GameDAO> databaseClass) throws DataAccessException {
+        GameDAO db = getDataAccess(databaseClass);
+
+
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = {MySqlGameDAO.class, MemoryGameDAO.class})
+    void getGamePositiveTest(Class<? extends GameDAO> databaseClass) throws DataAccessException {
+        GameDAO db = getDataAccess(databaseClass);
+        GameData game = new GameData(1, "", "",
+                "testGame", new ChessGame());
+
+        db.createGame(game);
+
+        GameData result = db.getGame(1);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(game.gameID(), result.gameID());
+        Assertions.assertEquals(game.gameName(), result.gameName());
+        Assertions.assertEquals(game.whiteUsername(), result.whiteUsername());
+        Assertions.assertEquals(game.blackUsername(), result.blackUsername());
+    }
 
 }

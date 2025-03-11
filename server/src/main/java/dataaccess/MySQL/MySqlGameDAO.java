@@ -77,27 +77,44 @@ public class MySqlGameDAO implements GameDAO {
     }
 
     @Override
-    public GameData getGame(int gameID) throws DataAccessException {
-        var statement = "SELECT * FROM games WHERE gameId = ?";
-        try (var conn = DatabaseManager.getConnection()) {
-            var result = DatabaseManager.executeQuery(conn, statement, gameID);
+    public GameData getGame(int gameId) throws DataAccessException {
+        var statement = "SELECT whiteUsername, blackUsername, gameName, game FROM games WHERE gameId = ?";
 
-            String whiteUsername = result.getString("whiteUsername");
-            String blackUsername = result.getString("blackUsername");
-            String gameName = result.getString("gameName");
-            ChessGame game = deserializeGame(result.getString("game"));
-            return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
+        try (var conn = DatabaseManager.getConnection();
+             var stmt = conn.prepareStatement(statement)) {
 
+            stmt.setInt(1, gameId);
+
+            try (var result = stmt.executeQuery()) {
+                result.next();
+
+                var whiteUsername = result.getString("whiteUsername");
+                var blackUsername = result.getString("blackUsername");
+                var gameName = result.getString("gameName");
+                var chessGameData = result.getString("game");
+
+                var chessGame = (chessGameData != null && !chessGameData.isEmpty())
+                        ? deserializeGame(chessGameData)
+                        : new ChessGame();
+
+                return new GameData(
+                        gameId,
+                        whiteUsername,
+                        blackUsername,
+                        gameName,
+                        chessGame
+                );
+            }
         } catch (DataAccessException | SQLException ex) {
-            throw new BadRequestException("Error: bad request");
+            throw new DataAccessException("Error retrieving game data");
         }
     }
 
     @Override
-    public void removeGame(int gameID) throws DataAccessException {
+    public void removeGame(int gameId) throws DataAccessException {
         var statement = "DELETE FROM games WHERE gameId = ?";
         try {
-            DatabaseManager.executeUpdate(statement, gameID);
+            DatabaseManager.executeUpdate(statement, gameId);
         } catch (DataAccessException ex) {
             throw new DataAccessException(ex.getMessage());
         }
@@ -109,7 +126,7 @@ public class MySqlGameDAO implements GameDAO {
         String blackUsername = game.blackUsername() == null ? "" : game.blackUsername();
 
         try {
-            var statement = "UPDATE games SET whiteUsername=?, blackUsername=?, gameName=?, game=? WHERE gameID=?";
+            var statement = "UPDATE games SET whiteUsername=?, blackUsername=?, gameName=?, game=? WHERE gameId=?";
             DatabaseManager.executeUpdate(statement, whiteUsername, blackUsername, game.gameName(),
                     serializeGame(game.game()), game.gameID());
         } catch (DataAccessException ex) {
