@@ -96,6 +96,4 @@ public class MySqlAuthDAO implements AuthDAO {
             throw new RuntimeException(ex.getMessage());
         }
     }
-
-
 }

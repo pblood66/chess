@@ -56,7 +56,7 @@ public class GameService {
 
     }
 
-    public boolean isColorAvailable(GameData game, String playerColor) throws DataAccessException {
+    public boolean isColorAvailable(GameData game, String playerColor) {
         if (playerColor.equals("WHITE")) {
             return game.whiteUsername().isEmpty();
         }
