@@ -6,6 +6,8 @@ import org.junit.jupiter.api.*;
 import server.Server;
 import ui.ServerFacade;
 
+import java.sql.SQLException;
+
 
 public class ServerFacadeTests {
 
@@ -27,10 +29,17 @@ public class ServerFacadeTests {
         server.stop();
     }
 
+    @BeforeEach
+    void clearDatabase() throws Exception {
+        facade.clear();
+    }
+
 
     @Test
     public void loginPositiveTest() throws Exception {
-        facade.register(new RegisterRequest("pblood", "pblood", "pblood"));
+        RegisterResult result = facade.register(new RegisterRequest("pblood", "pblood", "pblood"));
+
+        System.out.println(result.toString());
 
         Assertions.assertTrue(true);
     }
