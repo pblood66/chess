@@ -36,12 +36,23 @@ public class ServerFacadeTests {
 
 
     @Test
-    public void loginPositiveTest() throws Exception {
-        RegisterResult result = facade.register(new RegisterRequest("pblood", "pblood", "pblood"));
+    public void registerPositiveTest() throws Exception {
+        RegisterRequest request = new RegisterRequest("testuser", "testpass", "test");
+        RegisterResult result = facade.register(request);
 
         System.out.println(result.toString());
 
-        Assertions.assertTrue(true);
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(request.username(), result.username());
+        Assertions.assertNotNull(result.authToken());
+    }
+
+    @Test
+    public void registerNegativeTest() throws Exception {
+        RegisterRequest request = new RegisterRequest("testuser", "testpass", "test");
+        facade.register(request);
+
+        Assertions.assertThrows(Exception.class, () -> facade.register(request));
     }
 
 }
