@@ -7,7 +7,6 @@ import models.results.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.*;
 import java.util.Map;
 
@@ -33,6 +32,55 @@ public class ServerFacade {
         );
 
         return makeRequest("POST", path, body, RegisterResult.class);
+    }
+
+    public LoginResult login(LoginRequest request) throws Exception {
+        var path = serverUrl + "/session";
+        var body = Map.of(
+            "username", request.username(),
+            "password", request.password()
+        );
+
+        return makeRequest("POST", path, body, LoginResult.class);
+    }
+
+    public void logout(LogoutRequest request) throws Exception {
+        var path = serverUrl + "/session";
+        var body = Map.of(
+                "authToken", request.authToken()
+        );
+
+        makeRequest("DELETE", path, body, null);
+    }
+
+    public CreateGameResult createGame(CreateGameRequest request) throws Exception {
+        var path = serverUrl + "/game";
+        var body = Map.of(
+                "authToken", request.authToken(),
+                "gameName", request.gameName()
+        );
+
+        return makeRequest("POST", path, body, CreateGameResult.class);
+    }
+
+    public ListGamesResult listGames(ListGamesRequest request) throws Exception {
+        var path = serverUrl + "/game";
+        var body = Map.of(
+                  "authToken", request.authToken()
+        );
+
+        return makeRequest("GET", path, body, ListGamesResult.class);
+    }
+
+    public void joinGame(JoinGameRequest request) throws Exception {
+        var path = serverUrl + "/game";
+        var body = Map.of(
+                "authToken", request.authToken(),
+                "playerColor", request.playerColor(),
+                "gameID", request.gameID()
+        );
+
+        makeRequest("POST", path, body, Void.class);
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws Exception {
@@ -75,9 +123,4 @@ public class ServerFacade {
         }
         return response;
     }
-
-
-
-    private boolean isSuccessful(int status) { return status / 100 == 2; }
-
 }
