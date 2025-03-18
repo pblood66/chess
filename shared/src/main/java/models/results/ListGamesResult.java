@@ -1,4 +1,4 @@
-package service.results;
+package models.results;
 
 import models.GameData;
 
