@@ -1,7 +1,7 @@
 package client;
 
-import models.requests.RegisterRequest;
-import models.results.RegisterResult;
+import models.requests.*;
+import models.results.*;
 import org.junit.jupiter.api.*;
 import server.Server;
 import ui.ServerFacade;
@@ -20,7 +20,8 @@ public class ServerFacadeTests {
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
 
-        facade = new ServerFacade(port);
+        var serverUrl = String.format("http://localhost:%d", port);
+        facade = new ServerFacade(serverUrl);
 
     }
 
@@ -54,5 +55,76 @@ public class ServerFacadeTests {
 
         Assertions.assertThrows(Exception.class, () -> facade.register(request));
     }
+
+    @Test
+    public void loginPositiveTest() throws Exception {
+        RegisterRequest register = new RegisterRequest("testuser", "testpass", "test");
+        facade.register(register);
+
+        LoginRequest request = new LoginRequest("testuser", "testpass");
+        LoginResult result = facade.login(request);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(request.username(), result.username());
+        Assertions.assertNotNull(result.authToken());
+    }
+
+    @Test
+    public void loginNegativeTest() throws Exception {
+        LoginRequest request = new LoginRequest("testuser", "testpass");
+        Assertions.assertThrows(Exception.class, () -> facade.login(request));
+    }
+
+    @Test
+    public void logoutPositiveTest() throws Exception {
+        RegisterRequest register = new RegisterRequest("testuser", "testpass", "test");
+        RegisterResult registerResult = facade.register(register);
+
+        String authToken = registerResult.authToken();
+
+        LogoutRequest request = new LogoutRequest(authToken);
+
+        Assertions.assertDoesNotThrow(() -> facade.logout(request));
+    }
+
+    @Test
+    public void logoutNegativeTest() throws Exception {
+        LogoutRequest request = new LogoutRequest("bad auth token");
+
+        Assertions.assertThrows(Exception.class, () -> facade.logout(request));
+    }
+
+    @Test
+    public void createGamePositiveTest() throws Exception {
+        RegisterRequest register = new RegisterRequest("testuser", "testpass", "test");
+        RegisterResult registerResult = facade.register(register);
+        String authToken = registerResult.authToken();
+
+        CreateGameRequest request = new CreateGameRequest(authToken, "testGame");
+        CreateGameResult result = facade.createGame(request);
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(1, result.gameID());
+    }
+
+    @Test
+    public void createGameNegativeTest() throws Exception {
+        CreateGameRequest request = new CreateGameRequest("Bad Auth Token", "testGame");
+
+        Assertions.assertThrows(Exception.class, () -> facade.createGame(request));
+    }
+
+    @Test
+    public void listGamesPositiveTest() throws Exception {
+        RegisterRequest register = new RegisterRequest("testuser", "testpass", "test");
+        RegisterResult registerResult = facade.register(register);
+        String authToken = registerResult.authToken();
+
+        CreateGameRequest createGame = new CreateGameRequest(authToken, "testGame");
+        facade.createGame(createGame);
+
+        ListGamesRequest request = new ListGamesRequest("testuser");
+        ListGamesResult result = facade.listGames(request);
+    }
+
 
 }

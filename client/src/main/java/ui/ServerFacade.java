@@ -14,8 +14,8 @@ import java.util.Map;
 public class ServerFacade {
     private final String serverUrl;
 
-    public ServerFacade(int port) {
-        this.serverUrl = "http://localhost:" + port;
+    public ServerFacade(String serverUrl) {
+        this.serverUrl = serverUrl;
     }
 
     public void clear() throws Exception {
@@ -44,50 +44,51 @@ public class ServerFacade {
         return makeRequest("POST", path, body, LoginResult.class);
     }
 
+    // TODO: authToken is Authorization header not body
     public void logout(LogoutRequest request) throws Exception {
         var path = serverUrl + "/session";
         var body = Map.of(
                 "authToken", request.authToken()
         );
 
-        makeRequest("DELETE", path, body, null);
+        makeRequest("DELETE", path, null, null, request.authToken());
     }
 
     public CreateGameResult createGame(CreateGameRequest request) throws Exception {
         var path = serverUrl + "/game";
         var body = Map.of(
-                "authToken", request.authToken(),
                 "gameName", request.gameName()
         );
 
-        return makeRequest("POST", path, body, CreateGameResult.class);
+        return makeRequest("POST", path, body, CreateGameResult.class, request.authToken());
     }
 
     public ListGamesResult listGames(ListGamesRequest request) throws Exception {
         var path = serverUrl + "/game";
-        var body = Map.of(
-                  "authToken", request.authToken()
-        );
 
-        return makeRequest("GET", path, body, ListGamesResult.class);
+        return makeRequest("GET", path, null, ListGamesResult.class, request.authToken());
     }
 
     public void joinGame(JoinGameRequest request) throws Exception {
         var path = serverUrl + "/game";
         var body = Map.of(
-                "authToken", request.authToken(),
                 "playerColor", request.playerColor(),
                 "gameID", request.gameID()
         );
 
-        makeRequest("POST", path, body, Void.class);
+        makeRequest("POST", path, body, null, request.authToken());
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws Exception {
+    private <T> T makeRequest(String method, String path, Object request,
+                              Class<T> responseClass, String... authToken) throws Exception {
         try {
             HttpURLConnection http = (HttpURLConnection) (new URI(path)).toURL().openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
+
+            if (authToken != null && authToken.length > 0) {
+                http.setRequestProperty("Authorization", authToken[0]);
+            }
 
             writeBody(request, http);
 
@@ -97,7 +98,7 @@ public class ServerFacade {
                 return readBody(http, responseClass);
             }
 
-            throw new Exception(http.getResponseMessage());
+            throw new Exception(http.getResponseMessage() + " " + http.getResponseCode());
         } catch (Exception ex) {
             throw new Exception(ex);
         }
