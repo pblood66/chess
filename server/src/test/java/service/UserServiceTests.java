@@ -5,11 +5,11 @@ import dataaccess.exceptions.DataAccessException;
 import dataaccess.memory.MemoryAuthDAO;
 import dataaccess.memory.MemoryUserDAO;
 import org.junit.jupiter.api.*;
-import service.requests.LoginRequest;
-import service.requests.LogoutRequest;
-import service.requests.RegisterRequest;
-import service.results.LoginResult;
-import service.results.RegisterResult;
+import models.requests.LoginRequest;
+import models.requests.LogoutRequest;
+import models.requests.RegisterRequest;
+import models.results.LoginResult;
+import models.results.RegisterResult;
 
 public class UserServiceTests {
     private static UserService userService;

@@ -7,8 +7,11 @@ import dataaccess.exceptions.DuplicatedException;
 import dataaccess.exceptions.UnauthorizedException;
 import models.AuthData;
 import models.UserData;
-import service.requests.*;
-import service.results.*;
+import models.requests.LoginRequest;
+import models.requests.LogoutRequest;
+import models.requests.RegisterRequest;
+import models.results.LoginResult;
+import models.results.RegisterResult;
 
 import java.util.UUID;
 

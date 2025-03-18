@@ -11,11 +11,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import service.requests.CreateGameRequest;
-import service.requests.JoinGameRequest;
-import service.requests.ListGamesRequest;
-import service.results.CreateGameResult;
-import service.results.ListGamesResult;
+import models.requests.CreateGameRequest;
+import models.requests.JoinGameRequest;
+import models.requests.ListGamesRequest;
+import models.results.CreateGameResult;
+import models.results.ListGamesResult;
 
 public class GameServiceTests {
     private static GameDAO gameDAO;

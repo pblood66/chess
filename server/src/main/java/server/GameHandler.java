@@ -3,11 +3,11 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.exceptions.BadRequestException;
 import service.GameService;
-import service.requests.CreateGameRequest;
-import service.requests.JoinGameRequest;
-import service.requests.ListGamesRequest;
-import service.results.CreateGameResult;
-import service.results.ListGamesResult;
+import models.requests.CreateGameRequest;
+import models.requests.JoinGameRequest;
+import models.requests.ListGamesRequest;
+import models.results.CreateGameResult;
+import models.results.ListGamesResult;
 import spark.Request;
 import spark.Response;
 

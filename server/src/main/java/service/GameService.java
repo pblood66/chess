@@ -9,11 +9,11 @@ import dataaccess.exceptions.DataAccessException;
 import dataaccess.exceptions.DuplicatedException;
 import models.AuthData;
 import models.GameData;
-import service.requests.JoinGameRequest;
-import service.requests.ListGamesRequest;
-import service.requests.CreateGameRequest;
-import service.results.CreateGameResult;
-import service.results.ListGamesResult;
+import models.requests.JoinGameRequest;
+import models.requests.ListGamesRequest;
+import models.requests.CreateGameRequest;
+import models.results.CreateGameResult;
+import models.results.ListGamesResult;
 
 import java.util.Collection;
 
