@@ -1,18 +1,25 @@
 package client;
 
+import models.requests.RegisterRequest;
+import models.results.RegisterResult;
 import org.junit.jupiter.api.*;
 import server.Server;
+import ui.ServerFacade;
 
 
 public class ServerFacadeTests {
 
     private static Server server;
+    static ServerFacade facade;
 
     @BeforeAll
     public static void init() {
         server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
+
+        facade = new ServerFacade(port);
+
     }
 
     @AfterAll
@@ -22,7 +29,9 @@ public class ServerFacadeTests {
 
 
     @Test
-    public void sampleTest() {
+    public void loginPositiveTest() throws Exception {
+        facade.register(new RegisterRequest("pblood", "pblood", "pblood"));
+
         Assertions.assertTrue(true);
     }
 
