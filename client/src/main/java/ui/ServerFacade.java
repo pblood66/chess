@@ -24,28 +24,27 @@ public class ServerFacade {
         makeRequest("DELETE", path, null, null);
     }
 
-    public RegisterResult register(RegisterRequest request) throws Exception {
+    public RegisterResult register(String username, String password, String email) throws Exception {
         var path = serverUrl + "/user";
         var body = Map.of(
-                "username", request.username(),
-                "password", request.password(),
-                "email", request.email()
+                "username", username,
+                "password", password,
+                "email", email
         );
 
         return makeRequest("POST", path, body, RegisterResult.class);
     }
 
-    public LoginResult login(LoginRequest request) throws Exception {
+    public LoginResult login(String username, String password) throws Exception {
         var path = serverUrl + "/session";
         var body = Map.of(
-            "username", request.username(),
-            "password", request.password()
+            "username", username,
+            "password", password
         );
 
         return makeRequest("POST", path, body, LoginResult.class);
     }
 
-    // TODO: authToken is Authorization header not body
     public void logout(LogoutRequest request) throws Exception {
         var path = serverUrl + "/session";
         var body = Map.of(

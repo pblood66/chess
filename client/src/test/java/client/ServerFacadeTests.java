@@ -12,6 +12,10 @@ public class ServerFacadeTests {
     private static Server server;
     static ServerFacade facade;
 
+    private static final String username = "tester";
+    private static final String password = "password";
+    private static final String email = "test@test.com";
+
     @BeforeAll
     public static void init() {
         server = new Server();
@@ -36,47 +40,42 @@ public class ServerFacadeTests {
 
     @Test
     public void registerPositiveTest() throws Exception {
-        RegisterRequest request = new RegisterRequest("testuser", "testpass", "test");
-        RegisterResult result = facade.register(request);
+        RegisterResult result = facade.register(username, password, email);
 
         System.out.println(result.toString());
 
         Assertions.assertNotNull(result);
-        Assertions.assertEquals(request.username(), result.username());
+        Assertions.assertEquals(username, result.username());
         Assertions.assertNotNull(result.authToken());
     }
 
     @Test
     public void registerNegativeTest() throws Exception {
-        RegisterRequest request = new RegisterRequest("testuser", "testpass", "test");
-        facade.register(request);
+        facade.register(username, password, email);
 
-        Assertions.assertThrows(Exception.class, () -> facade.register(request));
+        Assertions.assertThrows(Exception.class, () -> facade.register(username, password, email));
+
     }
 
     @Test
     public void loginPositiveTest() throws Exception {
-        RegisterRequest register = new RegisterRequest("testuser", "testpass", "test");
-        facade.register(register);
+        facade.register(username, password, email);
 
-        LoginRequest request = new LoginRequest("testuser", "testpass");
-        LoginResult result = facade.login(request);
+        LoginResult result = facade.login(username, password);
 
         Assertions.assertNotNull(result);
-        Assertions.assertEquals(request.username(), result.username());
+        Assertions.assertEquals(username, result.username());
         Assertions.assertNotNull(result.authToken());
     }
 
     @Test
     public void loginNegativeTest() throws Exception {
-        LoginRequest request = new LoginRequest("testuser", "testpass");
-        Assertions.assertThrows(Exception.class, () -> facade.login(request));
+        Assertions.assertThrows(Exception.class, () -> facade.login(username, password));
     }
 
     @Test
     public void logoutPositiveTest() throws Exception {
-        RegisterRequest register = new RegisterRequest("testuser", "testpass", "test");
-        RegisterResult registerResult = facade.register(register);
+        RegisterResult registerResult = facade.register(username, password, email);
 
         String authToken = registerResult.authToken();
 
@@ -94,8 +93,8 @@ public class ServerFacadeTests {
 
     @Test
     public void createGamePositiveTest() throws Exception {
-        RegisterRequest register = new RegisterRequest("testuser", "testpass", "test");
-        RegisterResult registerResult = facade.register(register);
+        RegisterResult registerResult = facade.register(username, password, email);
+
         String authToken = registerResult.authToken();
 
         CreateGameRequest request = new CreateGameRequest(authToken, "testGame");
@@ -113,8 +112,8 @@ public class ServerFacadeTests {
 
     @Test
     public void listGamesPositiveTest() throws Exception {
-        RegisterRequest register = new RegisterRequest("testuser", "testpass", "test");
-        RegisterResult registerResult = facade.register(register);
+        RegisterResult registerResult = facade.register(username, password, email);
+
         String authToken = registerResult.authToken();
 
         CreateGameRequest createGame = new CreateGameRequest(authToken, "testGame");
@@ -132,8 +131,8 @@ public class ServerFacadeTests {
 
     @Test
     public void joinGamePositiveTest() throws Exception {
-        RegisterRequest register = new RegisterRequest("testuser", "testpass", "test");
-        RegisterResult registerResult = facade.register(register);
+            RegisterResult registerResult = facade.register(username, password, email);
+
         String authToken = registerResult.authToken();
 
         CreateGameRequest createGame = new CreateGameRequest(authToken, "testGame");
@@ -146,7 +145,7 @@ public class ServerFacadeTests {
 
     @Test
     public void joinGameNegativeTest() throws Exception {
-        JoinGameRequest reqest = new JoinGameRequest("Bad Auth Token", "testGame", 1);
-        Assertions.assertThrows(Exception.class, () -> facade.joinGame(reqest));
+        JoinGameRequest request = new JoinGameRequest("Bad Auth Token", "testGame", 1);
+        Assertions.assertThrows(Exception.class, () -> facade.joinGame(request));
     }
 }
