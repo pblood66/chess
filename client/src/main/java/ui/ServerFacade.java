@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import models.requests.*;
 import models.results.*;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -76,7 +77,7 @@ public class ServerFacade {
                 "gameID", request.gameID()
         );
 
-        makeRequest("POST", path, body, null, request.authToken());
+        makeRequest("PUT", path, body, null, request.authToken());
     }
 
     private <T> T makeRequest(String method, String path, Object request,
@@ -89,12 +90,13 @@ public class ServerFacade {
             if (authToken != null && authToken.length > 0) {
                 http.setRequestProperty("Authorization", authToken[0]);
             }
-
-            writeBody(request, http);
+            if (request != null) {
+                writeBody(request, http);
+            }
 
             http.connect();
 
-            if (http.getResponseCode() == 200) {
+            if (http.getResponseCode() / 100 == 2) {
                 return readBody(http, responseClass);
             }
 

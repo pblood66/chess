@@ -6,8 +6,6 @@ import org.junit.jupiter.api.*;
 import server.Server;
 import ui.ServerFacade;
 
-import java.sql.SQLException;
-
 
 public class ServerFacadeTests {
 
@@ -122,9 +120,33 @@ public class ServerFacadeTests {
         CreateGameRequest createGame = new CreateGameRequest(authToken, "testGame");
         facade.createGame(createGame);
 
-        ListGamesRequest request = new ListGamesRequest("testuser");
+        ListGamesRequest request = new ListGamesRequest(authToken);
         ListGamesResult result = facade.listGames(request);
     }
 
+    @Test
+    public void listGamesNegativeTest() throws Exception {
+        ListGamesRequest request = new ListGamesRequest("bad auth token");
+        Assertions.assertThrows(Exception.class, () -> facade.listGames(request));
+    }
 
+    @Test
+    public void joinGamePositiveTest() throws Exception {
+        RegisterRequest register = new RegisterRequest("testuser", "testpass", "test");
+        RegisterResult registerResult = facade.register(register);
+        String authToken = registerResult.authToken();
+
+        CreateGameRequest createGame = new CreateGameRequest(authToken, "testGame");
+        CreateGameResult createGameResult = facade.createGame(createGame);
+        int gameId = createGameResult.gameID();
+
+        JoinGameRequest request = new JoinGameRequest(authToken, "BLACK", gameId);
+        Assertions.assertDoesNotThrow(() -> facade.joinGame(request));
+    }
+
+    @Test
+    public void joinGameNegativeTest() throws Exception {
+        JoinGameRequest reqest = new JoinGameRequest("Bad Auth Token", "testGame", 1);
+        Assertions.assertThrows(Exception.class, () -> facade.joinGame(reqest));
+    }
 }
