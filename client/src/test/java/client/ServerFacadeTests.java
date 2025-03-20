@@ -79,16 +79,12 @@ public class ServerFacadeTests {
 
         String authToken = registerResult.authToken();
 
-        LogoutRequest request = new LogoutRequest(authToken);
-
-        Assertions.assertDoesNotThrow(() -> facade.logout(request));
+        Assertions.assertDoesNotThrow(() -> facade.logout(authToken));
     }
 
     @Test
     public void logoutNegativeTest() throws Exception {
-        LogoutRequest request = new LogoutRequest("bad auth token");
-
-        Assertions.assertThrows(Exception.class, () -> facade.logout(request));
+        Assertions.assertThrows(Exception.class, () -> facade.logout("bad auth token"));
     }
 
     @Test
@@ -97,17 +93,14 @@ public class ServerFacadeTests {
 
         String authToken = registerResult.authToken();
 
-        CreateGameRequest request = new CreateGameRequest(authToken, "testGame");
-        CreateGameResult result = facade.createGame(request);
+        CreateGameResult result = facade.createGame("testGame", authToken);
         Assertions.assertNotNull(result);
         Assertions.assertEquals(1, result.gameID());
     }
 
     @Test
     public void createGameNegativeTest() throws Exception {
-        CreateGameRequest request = new CreateGameRequest("Bad Auth Token", "testGame");
-
-        Assertions.assertThrows(Exception.class, () -> facade.createGame(request));
+        Assertions.assertThrows(Exception.class, () -> facade.createGame("testGame", "bad"));
     }
 
     @Test
@@ -116,17 +109,14 @@ public class ServerFacadeTests {
 
         String authToken = registerResult.authToken();
 
-        CreateGameRequest createGame = new CreateGameRequest(authToken, "testGame");
-        facade.createGame(createGame);
+        facade.createGame("testGame", authToken);
 
-        ListGamesRequest request = new ListGamesRequest(authToken);
-        ListGamesResult result = facade.listGames(request);
+        ListGamesResult result = facade.listGames(authToken);
     }
 
     @Test
     public void listGamesNegativeTest() throws Exception {
-        ListGamesRequest request = new ListGamesRequest("bad auth token");
-        Assertions.assertThrows(Exception.class, () -> facade.listGames(request));
+        Assertions.assertThrows(Exception.class, () -> facade.listGames("bad auth token"));
     }
 
     @Test
@@ -135,17 +125,15 @@ public class ServerFacadeTests {
 
         String authToken = registerResult.authToken();
 
-        CreateGameRequest createGame = new CreateGameRequest(authToken, "testGame");
-        CreateGameResult createGameResult = facade.createGame(createGame);
+        CreateGameResult createGameResult = facade.createGame("testGame", authToken);
         int gameId = createGameResult.gameID();
 
-        JoinGameRequest request = new JoinGameRequest(authToken, "BLACK", gameId);
-        Assertions.assertDoesNotThrow(() -> facade.joinGame(request));
+        Assertions.assertDoesNotThrow(() -> facade.joinGame("BLACK", gameId, authToken));
     }
 
     @Test
     public void joinGameNegativeTest() throws Exception {
         JoinGameRequest request = new JoinGameRequest("Bad Auth Token", "testGame", 1);
-        Assertions.assertThrows(Exception.class, () -> facade.joinGame(request));
+        Assertions.assertThrows(Exception.class, () -> facade.joinGame("request", 1, ""));
     }
 }

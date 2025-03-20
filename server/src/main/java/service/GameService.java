@@ -25,7 +25,7 @@ public class GameService {
     public GameService(GameDAO gameDAO, AuthDAO authDAO) {
         this.gameDAO = gameDAO;
         this.authDAO = authDAO;
-        currentGameId = 0;
+        currentGameId = gameDAO.size();
     }
 
 

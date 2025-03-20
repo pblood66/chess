@@ -45,38 +45,35 @@ public class ServerFacade {
         return makeRequest("POST", path, body, LoginResult.class);
     }
 
-    public void logout(LogoutRequest request) throws Exception {
+    public void logout(String authToken) throws Exception {
         var path = serverUrl + "/session";
-        var body = Map.of(
-                "authToken", request.authToken()
-        );
 
-        makeRequest("DELETE", path, null, null, request.authToken());
+        makeRequest("DELETE", path, null, null, authToken);
     }
 
-    public CreateGameResult createGame(CreateGameRequest request) throws Exception {
+    public CreateGameResult createGame(String gameName, String authToken) throws Exception {
         var path = serverUrl + "/game";
         var body = Map.of(
-                "gameName", request.gameName()
+                "gameName", gameName
         );
 
-        return makeRequest("POST", path, body, CreateGameResult.class, request.authToken());
+        return makeRequest("POST", path, body, CreateGameResult.class, authToken);
     }
 
-    public ListGamesResult listGames(ListGamesRequest request) throws Exception {
+    public ListGamesResult listGames(String authToken) throws Exception {
         var path = serverUrl + "/game";
 
-        return makeRequest("GET", path, null, ListGamesResult.class, request.authToken());
+        return makeRequest("GET", path, null, ListGamesResult.class, authToken);
     }
 
-    public void joinGame(JoinGameRequest request) throws Exception {
+    public void joinGame(String playerColor, int gameId, String authToken) throws Exception {
         var path = serverUrl + "/game";
         var body = Map.of(
-                "playerColor", request.playerColor(),
-                "gameID", request.gameID()
+                "playerColor", playerColor,
+                "gameID", gameId
         );
 
-        makeRequest("PUT", path, body, null, request.authToken());
+        makeRequest("PUT", path, body, null, authToken);
     }
 
     private <T> T makeRequest(String method, String path, Object request,
