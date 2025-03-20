@@ -5,8 +5,11 @@ import chess.ChessGame;
 public class ClientData {
     private String authToken;
     private String username = "";
+
     private int gameId;
     private ChessGame.TeamColor playerColor;
+    private ChessGame game;
+
     private ClientState state;
 
     public enum ClientState {
@@ -19,6 +22,7 @@ public class ClientData {
         this.authToken = "";
         this.gameId = 0;
         this.state = ClientState.LOGGED_OUT;
+        game = new ChessGame();
     }
 
     public ClientState getState() {

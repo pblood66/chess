@@ -8,12 +8,10 @@ import java.util.Arrays;
 
 public class PreLoginClient {
     private ServerFacade server;
-    private String serverUrl;
-    private ClientData clientData;
+    private final ClientData clientData;
 
     public PreLoginClient(String serverUrl, ClientData clientData) {
         server = new ServerFacade(serverUrl);
-        this.serverUrl = serverUrl;
         this.clientData = clientData;
     }
 
@@ -31,6 +29,7 @@ public class PreLoginClient {
                 yield "Logged in as " + clientData.getUsername();
             }
             case "quit" -> quit();
+            case "help" -> help();
             default -> help();
         };
 

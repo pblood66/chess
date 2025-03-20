@@ -13,14 +13,15 @@ import java.util.Scanner;
 public class Repl {
     private final PreLoginClient preLogin;
     private final PostLoginClient postLogin;
-    private GameClient game;
+    private GameClient gameClient;
 
-    private ClientData clientData;
+    private final ClientData clientData;
 
     public Repl(String serverUrl) {
         clientData = new ClientData();
         preLogin = new PreLoginClient(serverUrl, clientData);
         postLogin = new PostLoginClient(serverUrl, clientData);
+        gameClient = new GameClient(serverUrl, clientData);
     }
 
     public void run() {
@@ -34,14 +35,16 @@ public class Repl {
             printPrompt();
             String line = scanner.nextLine();
 
-            result = line;
-
             switch (clientData.getState()) {
                 case LOGGED_OUT:
                     result = preLogin.eval(line);
+                    break;
                 case LOGGED_IN:
                     result = postLogin.eval(line);
+                    break;
                 case IN_GAME:
+                    result = gameClient.eval(line);
+                    break;
             }
 
             System.out.println(result);

@@ -8,12 +8,10 @@ import ui.ServerFacade;
 import java.util.Arrays;
 
 public class PostLoginClient {
-    private String serverUrl;
     private ServerFacade server;
     private ClientData clientData;
 
     public PostLoginClient(String serverUrl, ClientData clientData) {
-        this.serverUrl = serverUrl;
         server = new ServerFacade(serverUrl);
         this.clientData = clientData;
     }

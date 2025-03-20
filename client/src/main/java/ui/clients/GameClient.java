@@ -4,17 +4,20 @@ import chess.ChessGame;
 import models.GameData;
 
 public class GameClient {
-    private final String authToken;
-    private final ChessGame game;
-    private final int gameId;
-    private final ChessGame.TeamColor playerColor;
+    private String serverUrl;
+    private ClientData clientData;
 
-    public GameClient(String authToken, ChessGame game, int gameID, ChessGame.TeamColor playerColor) {
-        this.authToken = authToken;
-        this.game = game;
-        this.gameId = gameID;
-        this.playerColor = playerColor;
+    public GameClient(String serverUrl, ClientData clientData) {
+        this.serverUrl = serverUrl;
+        this.clientData = clientData;
     }
 
 
+    public String eval(String line) {
+        return "";
+    }
+
+    public String drawBoard() {
+        return "Chess Board: ";
+    }
 }
