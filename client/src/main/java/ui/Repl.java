@@ -5,9 +5,9 @@ import ui.clients.GameClient;
 import ui.clients.PostLoginClient;
 import ui.clients.PreLoginClient;
 
-import static ui.EscapeSequences.*;
-
 import java.util.Scanner;
+
+import static ui.EscapeSequences.*;
 
 
 public class Repl {

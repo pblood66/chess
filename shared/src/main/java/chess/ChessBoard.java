@@ -94,9 +94,12 @@ public class ChessBoard implements Cloneable {
             addPawns(team);
             addBackRow(team);
         }
-
-
     }
+
+    public ChessPiece[] getRow(int index) {
+        return board[index];
+    }
+
 
     private void addPawns(ChessGame.TeamColor team) {
         int row = team == ChessGame.TeamColor.WHITE ? 2 : 7;

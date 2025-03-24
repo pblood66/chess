@@ -2,6 +2,7 @@ package ui.clients;
 
 import chess.ChessGame;
 import models.GameData;
+import ui.BoardUi;
 
 public class GameClient {
     private String serverUrl;
@@ -14,10 +15,12 @@ public class GameClient {
 
 
     public String eval(String line) {
-        return "";
+        return drawBoard();
     }
 
     public String drawBoard() {
-        return "Chess Board: ";
+        return BoardUi.drawBoard(clientData.getGame().getBoard(), clientData.getPlayerColor());
     }
+
+
 }
