@@ -8,7 +8,7 @@ import chess.ChessPosition;
 import static ui.EscapeSequences.*;
 
 public class BoardUi {
-    private static final String[] columnHeaders = {"\u2003a ", "\u2003b ", "\u2003c ", "\u2003d ", "\u2003e ", "\u2003f ",
+    private static final String[] COLUMN_HEADERS = {"\u2003a ", "\u2003b ", "\u2003c ", "\u2003d ", "\u2003e ", "\u2003f ",
             "\u2003g ", "\u2003h "};
 
     public static String drawBoard(ChessBoard board, ChessGame.TeamColor playerColor) {
@@ -64,13 +64,13 @@ public class BoardUi {
         headers.append(SET_BG_COLOR_DARK_GREY).append(SET_TEXT_BOLD).append("   ");
 
         if (teamColor == ChessGame.TeamColor.WHITE) {
-            for (String columnHeader : columnHeaders) {
+            for (String columnHeader : COLUMN_HEADERS) {
                 headers.append(columnHeader);
             }
         }
         else {
-            for (int i = columnHeaders.length - 1; i >= 0; i--) {
-                headers.append(columnHeaders[i]);
+            for (int i = COLUMN_HEADERS.length - 1; i >= 0; i--) {
+                headers.append(COLUMN_HEADERS[i]);
             }
         }
         headers.append("   ").append(RESET_BG_COLOR).append(RESET_TEXT_BOLD_FAINT);

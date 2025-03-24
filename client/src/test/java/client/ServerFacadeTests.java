@@ -12,9 +12,9 @@ public class ServerFacadeTests {
     private static Server server;
     static ServerFacade facade;
 
-    private static final String username = "tester";
-    private static final String password = "password";
-    private static final String email = "test@test.com";
+    private static final String USERNAME = "tester";
+    private static final String PASSWORD = "password";
+    private static final String EMAIL = "test@test.com";
 
     @BeforeAll
     public static void init() {
@@ -40,42 +40,42 @@ public class ServerFacadeTests {
 
     @Test
     public void registerPositiveTest() throws Exception {
-        RegisterResult result = facade.register(username, password, email);
+        RegisterResult result = facade.register(USERNAME, PASSWORD, EMAIL);
 
         System.out.println(result.toString());
 
         Assertions.assertNotNull(result);
-        Assertions.assertEquals(username, result.username());
+        Assertions.assertEquals(USERNAME, result.username());
         Assertions.assertNotNull(result.authToken());
     }
 
     @Test
     public void registerNegativeTest() throws Exception {
-        facade.register(username, password, email);
+        facade.register(USERNAME, PASSWORD, EMAIL);
 
-        Assertions.assertThrows(Exception.class, () -> facade.register(username, password, email));
+        Assertions.assertThrows(Exception.class, () -> facade.register(USERNAME, PASSWORD, EMAIL));
 
     }
 
     @Test
     public void loginPositiveTest() throws Exception {
-        facade.register(username, password, email);
+        facade.register(USERNAME, PASSWORD, EMAIL);
 
-        LoginResult result = facade.login(username, password);
+        LoginResult result = facade.login(USERNAME, PASSWORD);
 
         Assertions.assertNotNull(result);
-        Assertions.assertEquals(username, result.username());
+        Assertions.assertEquals(USERNAME, result.username());
         Assertions.assertNotNull(result.authToken());
     }
 
     @Test
     public void loginNegativeTest() throws Exception {
-        Assertions.assertThrows(Exception.class, () -> facade.login(username, password));
+        Assertions.assertThrows(Exception.class, () -> facade.login(USERNAME, PASSWORD));
     }
 
     @Test
     public void logoutPositiveTest() throws Exception {
-        RegisterResult registerResult = facade.register(username, password, email);
+        RegisterResult registerResult = facade.register(USERNAME, PASSWORD, EMAIL);
 
         String authToken = registerResult.authToken();
 
@@ -89,7 +89,7 @@ public class ServerFacadeTests {
 
     @Test
     public void createGamePositiveTest() throws Exception {
-        RegisterResult registerResult = facade.register(username, password, email);
+        RegisterResult registerResult = facade.register(USERNAME, PASSWORD, EMAIL);
 
         String authToken = registerResult.authToken();
 
@@ -105,7 +105,7 @@ public class ServerFacadeTests {
 
     @Test
     public void listGamesPositiveTest() throws Exception {
-        RegisterResult registerResult = facade.register(username, password, email);
+        RegisterResult registerResult = facade.register(USERNAME, PASSWORD, EMAIL);
 
         String authToken = registerResult.authToken();
 
@@ -121,7 +121,7 @@ public class ServerFacadeTests {
 
     @Test
     public void joinGamePositiveTest() throws Exception {
-            RegisterResult registerResult = facade.register(username, password, email);
+            RegisterResult registerResult = facade.register(USERNAME, PASSWORD, EMAIL);
 
         String authToken = registerResult.authToken();
 
