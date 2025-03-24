@@ -31,6 +31,7 @@ public class PostLoginClient {
                     return "Created game: " + params[0];
                 case "list":
                     var games = listGames(clientData.getAuthToken());
+                    clientData.setGames(games.games());
                     return games.toString();
                 case "join":
                     joinGame(params, clientData.getAuthToken());
@@ -38,6 +39,9 @@ public class PostLoginClient {
                     System.out.println(BoardUi.drawBoard(new ChessGame().getBoard(), ChessGame.TeamColor.BLACK));
 
                     return "Joined game: " + params[0];
+                case "observe":
+                    return observe(params);
+
                 case "quit":
                     return tokens[0];
 
@@ -51,20 +55,22 @@ public class PostLoginClient {
 
     }
 
+
+
     // contains functions for client to logout, create game, list games, play game, observe, and help
     public String help() {
         return """
                 logout - logs user out
                 create <NAME> - creates a new game
                 list - lists all the games
-                join <ID> [WHITE|BLACK] - joins the game
-                observe - spectate a game
+                join <Game ID> [WHITE|BLACK] - joins the game
+                observe <Game ID> - spectate a game
                 quit - quits playing chess
                 help - shows this help message
                 """;
     }
 
-    public void logout(String authToken) throws Exception {
+    private void logout(String authToken) throws Exception {
         try {
             server.logout(authToken);
             clientData.setAuthToken("");
@@ -75,7 +81,7 @@ public class PostLoginClient {
         }
     }
 
-    public CreateGameResult createGame(String[] params, String authToken) throws Exception {
+    private CreateGameResult createGame(String[] params, String authToken) throws Exception {
         if (params.length != 1) {
             throw new Exception("<Game Name>");
         }
@@ -87,7 +93,7 @@ public class PostLoginClient {
         }
     }
 
-    public ListGamesResult listGames(String authToken) throws Exception {
+    private ListGamesResult listGames(String authToken) throws Exception {
         try {
             return server.listGames(authToken);
         } catch (Exception e) {
@@ -95,7 +101,7 @@ public class PostLoginClient {
         }
     }
 
-    public void joinGame(String[] params, String authToken) throws Exception {
+    private void joinGame(String[] params, String authToken) throws Exception {
         if (params.length != 2) {
             throw new Exception("<Game ID> <WHITE/BLACK>");
         }
@@ -110,6 +116,29 @@ public class PostLoginClient {
         } catch(Exception e) {
             throw new Exception("Could not join game: " + params[0]);
         }
+    }
+
+    private String observe(String[] params) throws Exception {
+        var games = server.listGames(clientData.getAuthToken()).games();
+
+        int gameId = Integer.parseInt(params[0]);
+
+        for (var game : games) {
+            if (game.gameID() == gameId) {
+
+                String observe = "Observing Game: " + gameId + "\n" +
+                        BoardUi.drawBoard(game.game().getBoard(), ChessGame.TeamColor.WHITE) +
+                        "\n" +
+                        BoardUi.drawBoard(game.game().getBoard(), ChessGame.TeamColor.BLACK);
+                clientData.setState(ClientData.ClientState.IN_GAME);
+                clientData.setGame(game.game());
+                clientData.setGameId(gameId);
+
+                return observe;
+            }
+        }
+
+        throw new Exception("Could not find Game: " + gameId);
     }
 
 

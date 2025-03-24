@@ -1,6 +1,9 @@
 package ui.clients;
 
 import chess.ChessGame;
+import models.GameData;
+
+import java.util.Collection;
 
 public class ClientData {
     private String authToken;
@@ -9,6 +12,7 @@ public class ClientData {
     private int gameId;
     private ChessGame.TeamColor playerColor;
     private ChessGame game;
+    private Collection<GameData> games;
 
     private ClientState state;
 
@@ -31,6 +35,14 @@ public class ClientData {
         this.gameId = 0;
         this.state = ClientState.LOGGED_OUT;
         game = new ChessGame();
+    }
+
+    public Collection<GameData> getGames() {
+        return games;
+    }
+
+    public void setGames(Collection<GameData> games) {
+        this.games = games;
     }
 
     public ClientState getState() {

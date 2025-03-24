@@ -13,7 +13,7 @@ import static ui.EscapeSequences.*;
 public class Repl {
     private final PreLoginClient preLogin;
     private final PostLoginClient postLogin;
-    private GameClient gameClient;
+    private final GameClient gameClient;
 
     private final ClientData clientData;
 
