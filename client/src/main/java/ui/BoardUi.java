@@ -11,6 +11,14 @@ public class BoardUi {
     private static final String[] COLUMN_HEADERS = {"\u2003a ", "\u2003b ", "\u2003c ", "\u2003d ", "\u2003e ", "\u2003f ",
             "\u2003g ", "\u2003h "};
 
+    public static void main(String[] args) {
+        ChessBoard board = new ChessBoard();
+        board.resetBoard();
+        System.out.println(drawBoard(board, ChessGame.TeamColor.WHITE));
+        System.out.println(drawBoard(board, ChessGame.TeamColor.BLACK));
+
+    }
+
     public static String drawBoard(ChessBoard board, ChessGame.TeamColor playerColor) {
         StringBuilder builder = new StringBuilder();
 
@@ -27,7 +35,7 @@ public class BoardUi {
                     .append(" ").append(8 - row).append(" ")
                     .append(RESET_BG_COLOR);
 
-            for (int col = 0; col < 8; col++) {
+            for (int col = startRow; col != endRow; col += step) {
                 builder.append(setTile(col, row, board.getPiece(new ChessPosition(row + 1, col + 1))));
             }
 

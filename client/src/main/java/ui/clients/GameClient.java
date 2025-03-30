@@ -22,8 +22,8 @@ public class GameClient {
 
         try {
             return switch (tokens[0]) {
-                case "redraw" -> drawBoard();
                 case "quit" -> quit();
+                case "help" -> help();
                 default -> drawBoard();
             };
         }
@@ -31,23 +31,29 @@ public class GameClient {
             return "[ERROR]: " + e.getMessage();
         }
     }
+    private String help() {
+        return """
+                redraw - redraws the board for spectator or player
+                help - shows this help message
+                quit - quits current game
+                """;
+    }
 
     public String drawBoard() {
         if (clientData.getPlayerColor() != null) {
-            return BoardUi.drawBoard(clientData.getGame().getBoard(), clientData.getPlayerColor());
+            return BoardUi.drawBoard(clientData.getCurrentGame().game().getBoard(), clientData.getPlayerColor());
         }
         else {
-            return "Observing Game: " + clientData.getGameId() + "\n" +
-                    BoardUi.drawBoard(clientData.getGame().getBoard(), ChessGame.TeamColor.WHITE) +
+            return "Observing Game: " + clientData.getCurrentGame().gameID() + "\n" +
+                    BoardUi.drawBoard(clientData.getCurrentGame().game().getBoard(), ChessGame.TeamColor.WHITE) +
                     "\n" +
-                    BoardUi.drawBoard(clientData.getGame().getBoard(), ChessGame.TeamColor.BLACK);
+                    BoardUi.drawBoard(clientData.getCurrentGame().game().getBoard(), ChessGame.TeamColor.BLACK);
         }
     }
 
     private String quit() {
         clientData.setPlayerColor(null);
-        clientData.setGame(null);
-        clientData.setGameId(0);
+        clientData.setCurrentGame(null);
         clientData.setState(ClientData.ClientState.LOGGED_IN);
 
         return "quit game";

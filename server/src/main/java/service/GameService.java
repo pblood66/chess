@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
@@ -74,8 +75,12 @@ public class GameService {
         try {
             authDAO.getAuth(token);
             currentGameId++;
+            ChessGame game = new ChessGame();
+            ChessBoard board = new ChessBoard();
+            board.resetBoard();
+            game.setBoard(board);
             GameData newGame = new GameData(currentGameId, null, null,
-                    gameName, new ChessGame());
+                    gameName, game);
             gameDAO.createGame(newGame);
             return new CreateGameResult(currentGameId);
 

@@ -123,8 +123,10 @@ public class ChessBoard implements Cloneable {
             addPiece(position, piece);
         }
 
+
         addPiece(new ChessPosition(row, 4), new ChessPiece(team, ChessPiece.PieceType.QUEEN));
         addPiece(new ChessPosition(row, 5), new ChessPiece(team, ChessPiece.PieceType.KING));
+
 
         for (int i = backRow.length - 1; i >= 0; i--) {
             ChessPiece piece = new ChessPiece(team, backRow[i]);

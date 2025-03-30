@@ -107,10 +107,18 @@ public class PostLoginClient {
         }
 
         try {
+            clientData.setGames(server.listGames(clientData.getAuthToken()).games());
+
             server.joinGame(params[1],
                     Integer.parseInt(params[0]),
                     authToken);
-            clientData.setGameId(Integer.parseInt(params[0]));
+
+            for (var game : clientData.getGames()) {
+                if (game.gameID() == Integer.parseInt(params[0])) {
+                    clientData.setCurrentGame(game);
+                }
+            }
+
             clientData.setPlayerColor(ChessGame.TeamColor.valueOf(params[1]));
             clientData.setState(ClientData.ClientState.IN_GAME);
         } catch(Exception e) {
@@ -131,8 +139,7 @@ public class PostLoginClient {
                         "\n" +
                         BoardUi.drawBoard(game.game().getBoard(), ChessGame.TeamColor.BLACK);
                 clientData.setState(ClientData.ClientState.IN_GAME);
-                clientData.setGame(game.game());
-                clientData.setGameId(gameId);
+                clientData.setCurrentGame(game);
 
                 return observe;
             }
@@ -140,6 +147,4 @@ public class PostLoginClient {
 
         throw new Exception("Could not find Game: " + gameId);
     }
-
-
 }

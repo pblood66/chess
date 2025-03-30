@@ -9,19 +9,15 @@ public class ClientData {
     private String authToken;
     private String username = "";
 
-    private int gameId;
     private ChessGame.TeamColor playerColor;
-    private ChessGame game;
+    private GameData currentGame;
     private Collection<GameData> games;
 
     private ClientState state;
 
-    public ChessGame getGame() {
-        return game;
-    }
-
-    public void setGame(ChessGame game) {
-        this.game = game;
+    public ClientData() {
+        this.authToken = "";
+        this.state = ClientState.LOGGED_OUT;
     }
 
     public enum ClientState {
@@ -30,11 +26,13 @@ public class ClientData {
         IN_GAME
     }
 
-    public ClientData() {
-        this.authToken = "";
-        this.gameId = 0;
-        this.state = ClientState.LOGGED_OUT;
-        game = new ChessGame();
+
+    public GameData getCurrentGame() {
+        return currentGame;
+    }
+
+    public void setCurrentGame(GameData currentGame) {
+        this.currentGame = currentGame;
     }
 
     public Collection<GameData> getGames() {
@@ -53,13 +51,6 @@ public class ClientData {
         this.state = state;
     }
 
-    public int getGameId() {
-        return gameId;
-    }
-
-    public void setGameId(int gameId) {
-        this.gameId = gameId;
-    }
 
     public String getAuthToken() {
         return authToken;
