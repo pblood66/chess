@@ -22,7 +22,7 @@ public class GameClient {
 
         try {
             return switch (tokens[0]) {
-                case "quit" -> quit();
+                case "leave" -> leave();
                 case "help" -> help();
                 default -> drawBoard();
             };
@@ -35,7 +35,10 @@ public class GameClient {
         return """
                 redraw - redraws the board for spectator or player
                 help - shows this help message
-                quit - quits current game
+                move <position 1> <position 2> - makes move and updates board
+                resign - resign game
+                legal <position> -  highlights legal moves of piece
+                leave - quits current game
                 """;
     }
 
@@ -51,7 +54,7 @@ public class GameClient {
         }
     }
 
-    private String quit() {
+    private String leave() {
         clientData.setPlayerColor(null);
         clientData.setCurrentGame(null);
         clientData.setState(ClientData.ClientState.LOGGED_IN);
