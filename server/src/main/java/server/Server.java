@@ -18,6 +18,7 @@ public class Server {
     private final ClearHandler clearHandler;
     private final UserHandler userHandler;
     private final GameHandler gameHandler;
+    private final WebSocketHandler webSocketHandler;
 
     public Server() {
 
@@ -33,6 +34,8 @@ public class Server {
 
         GameService gameService = new GameService(gameDAO, authDAO);
         gameHandler = new GameHandler(gameService);
+
+        webSocketHandler = new WebSocketHandler();
     }
 
     public int run(int desiredPort) {
@@ -41,6 +44,7 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
+        Spark.webSocket("/ws", webSocketHandler);
         Spark.delete("/db", clearHandler::clear);
 
         Spark.post("/user", userHandler::register);
@@ -50,6 +54,7 @@ public class Server {
         Spark.post("/game", gameHandler::createGame);
         Spark.get("/game", gameHandler::listGames);
         Spark.put("/game", gameHandler::joinGame);
+
 
 
 
