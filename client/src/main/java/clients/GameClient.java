@@ -1,7 +1,6 @@
-package ui.clients;
+package clients;
 
 import chess.ChessGame;
-import models.GameData;
 import ui.BoardUi;
 
 import java.util.Arrays;

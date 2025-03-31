@@ -1,8 +1,4 @@
-package ui.clients;
-
-import models.results.LoginResult;
-import models.results.RegisterResult;
-import ui.ServerFacade;
+package clients;
 
 import java.util.Arrays;
 

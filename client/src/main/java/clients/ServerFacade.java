@@ -1,4 +1,4 @@
-package ui;
+package clients;
 
 import com.google.gson.Gson;
 import models.results.CreateGameResult;

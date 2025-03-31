@@ -1,4 +1,4 @@
-package ui.clients;
+package clients;
 
 import chess.ChessGame;
 import models.GameData;

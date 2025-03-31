@@ -1,9 +1,9 @@
 package ui;
 
-import ui.clients.ClientData;
-import ui.clients.GameClient;
-import ui.clients.PostLoginClient;
-import ui.clients.PreLoginClient;
+import clients.ClientData;
+import clients.GameClient;
+import clients.PostLoginClient;
+import clients.PreLoginClient;
 
 import java.util.Scanner;
 

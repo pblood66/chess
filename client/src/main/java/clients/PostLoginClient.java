@@ -1,10 +1,9 @@
-package ui.clients;
+package clients;
 
 import chess.ChessGame;
 import models.results.CreateGameResult;
 import models.results.ListGamesResult;
 import ui.BoardUi;
-import ui.ServerFacade;
 
 import java.util.Arrays;
 

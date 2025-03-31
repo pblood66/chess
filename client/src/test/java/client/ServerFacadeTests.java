@@ -4,7 +4,7 @@ import models.requests.*;
 import models.results.*;
 import org.junit.jupiter.api.*;
 import server.Server;
-import ui.ServerFacade;
+import clients.ServerFacade;
 
 
 public class ServerFacadeTests {
