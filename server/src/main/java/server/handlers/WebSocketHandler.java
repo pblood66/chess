@@ -1,4 +1,4 @@
-package server;
+package server.handlers;
 
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
@@ -13,7 +13,6 @@ public class WebSocketHandler {
     public void onMessage(Session session, String message) {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
 
-        System.out.println(command.getCommandType());
         switch (command.getCommandType()) {
             case CONNECT:
                 break;
