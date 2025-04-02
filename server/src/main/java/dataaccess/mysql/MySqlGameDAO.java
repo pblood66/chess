@@ -108,7 +108,7 @@ public class MySqlGameDAO implements GameDAO {
                 );
             }
         } catch (DataAccessException | SQLException ex) {
-            throw new BadRequestException("Error retrieving game data");
+            throw new BadRequestException("Error: Invalid game ID");
         }
     }
 

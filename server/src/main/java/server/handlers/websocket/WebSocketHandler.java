@@ -47,8 +47,9 @@ public class WebSocketHandler {
     }
 
     @OnWebSocketError
-    public void onError(Session session, Throwable error) throws Throwable {
-        System.out.println(error.getMessage());
+    public void onError(Session session, Throwable error) throws Exception {
+        ErrorMessage errorMessage = new ErrorMessage(error.getMessage());
+        session.getRemote().sendString(errorMessage.toJson());
     }
 
     private void sendMessage(Session session, ServerMessage message) throws IOException {
@@ -57,40 +58,30 @@ public class WebSocketHandler {
 
     private void handleConnect(Session session, UserGameCommand command) throws Exception {
         // Server sends a LOAD_GAME message back to the root client.
-        GameData currentGame;
-        AuthData auth;
         try {
-            currentGame = gameDAO.getGame(command.getGameID());
-        } catch (DataAccessException e) {
-            ErrorMessage errorMessage = new ErrorMessage("Error: Invalid game ID");
-            sendMessage(session, errorMessage);
-            return;
+            GameData currentGame = gameDAO.getGame(command.getGameID());
+            AuthData auth = authDAO.getAuth(command.getAuthToken());
+
+            LoadGameMessage loadGame = new LoadGameMessage(currentGame);
+
+            sendMessage(session, loadGame);
+            gameSessions.addSession(currentGame.gameID(), command.getAuthToken(), session);
+
+            String role;
+            if (auth.username().equals(currentGame.whiteUsername())) {
+                role = "white";
+            } else if (auth.username().equals(currentGame.blackUsername())) {
+                role = "black";
+            } else {
+                role = "observer";
+            }
+
+            NotificationMessage notification = new NotificationMessage(auth.username() + " has connected as " + role);
+
+            gameSessions.broadcast(currentGame.gameID(), notification, command.getAuthToken());
+        } catch (DataAccessException ex) {
+            onError(session, ex);
         }
-
-        try {
-            auth = authDAO.getAuth(command.getAuthToken());
-        } catch (DataAccessException e) {
-            ErrorMessage errorMessage = new ErrorMessage("Error: Unauthorized");
-            sendMessage(session, errorMessage);
-            return;
-        }
-        LoadGameMessage loadGame = new LoadGameMessage(currentGame);
-
-        sendMessage(session, loadGame);
-        gameSessions.addSession(currentGame.gameID(), command.getAuthToken(), session);
-
-        String role;
-        if (auth.username().equals(currentGame.whiteUsername())) {
-            role = "white";
-        } else if (auth.username().equals(currentGame.blackUsername())) {
-            role = "black";
-        } else {
-            role = "observer";
-        }
-
-        NotificationMessage notification = new NotificationMessage(auth.username() + " has connected as " + role);
-
-        gameSessions.broadcast(currentGame.gameID(), notification, command.getAuthToken());
 
     }
 
