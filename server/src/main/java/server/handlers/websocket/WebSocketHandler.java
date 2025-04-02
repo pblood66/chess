@@ -1,5 +1,6 @@
 package server.handlers.websocket;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
@@ -9,6 +10,7 @@ import models.*;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import websocket.commands.ConnectCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
@@ -50,21 +52,50 @@ public class WebSocketHandler {
     private void handleConnect(Session session, UserGameCommand command) throws Exception {
         // Server sends a LOAD_GAME message back to the root client.
         GameData currentGame = gameDAO.getGame(command.getGameID());
+        AuthData auth = authDAO.getAuth(command.getAuthToken());
         LoadGameMessage loadGame = new LoadGameMessage(currentGame);
 
         sendMessage(session, loadGame);
+        gameSessions.addSession(currentGame.gameID(), command.getAuthToken(), session);
 
-        // Server sends a Notification message to all other clients in that game informing them the root client
-        // connected to the game, either as a player (in which case their color must be specified) or as an observer.
-        AuthData auth = authDAO.getAuth(command.getAuthToken());
-        NotificationMessage notification = new NotificationMessage(auth.username() + " has connected to to game");
-        // sendMessage(session, notification);
+        String role;
+        if (auth.username().equals(currentGame.whiteUsername())) {
+            role = "white";
+        } else if (auth.username().equals(currentGame.blackUsername())) {
+            role = "black";
+        } else {
+            role = "observer";
+        }
+
+        NotificationMessage notification = new NotificationMessage(auth.username() + " has connected as " + role);
+
+        gameSessions.broadcast(currentGame.gameID(), notification, command.getAuthToken());
     }
 
-    private void handleLeave(Session session, UserGameCommand command) {
+    private void handleLeave(Session session, UserGameCommand command) throws Exception {
+        int gameId = command.getGameID();
+        String authToken = command.getAuthToken();
+
+        GameData currentGame = gameDAO.getGame(gameId);
+        AuthData auth = authDAO.getAuth(authToken);
+
+        String username = auth.username();
+
+        if (currentGame.whiteUsername().equals(username)) {
+            currentGame.setWhiteUsername(null);
+        }
+        else if (currentGame.blackUsername().equals(username)) {
+            currentGame.setBlackUsername(null);
+        }
+
+        gameDAO.updateGame(currentGame);
+
+        NotificationMessage notification = new NotificationMessage(auth.username() + " has left the game");
+        gameSessions.broadcast(currentGame.gameID(), notification, authToken);
     }
 
     private void handleResign(Session session, UserGameCommand command) {
+
     }
 
     private void handleMove(Session session, UserGameCommand command) {
