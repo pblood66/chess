@@ -22,11 +22,13 @@ public class WebSocketHandler {
     private GameDAO gameDAO;
     private UserDAO userDAO;
     private AuthDAO authDAO;
+    private GameSessionManager gameSessions;
 
     public WebSocketHandler(GameDAO gameDAO, UserDAO userDAO, AuthDAO authDAO) {
         this.gameDAO = gameDAO;
         this.userDAO = userDAO;
         this.authDAO = authDAO;
+        this.gameSessions = new GameSessionManager();
     }
 
     @OnWebSocketMessage
