@@ -6,11 +6,11 @@ import ui.BoardUi;
 import java.util.Arrays;
 
 public class GameClient {
-    private String serverUrl;
+    private ServerFacade server;
     private ClientData clientData;
 
     public GameClient(String serverUrl, ClientData clientData) {
-        this.serverUrl = serverUrl;
+        this.server = new ServerFacade(serverUrl);
         this.clientData = clientData;
     }
 
@@ -21,6 +21,10 @@ public class GameClient {
 
         try {
             return switch (tokens[0]) {
+                case "redraw" -> drawBoard();
+                case "move" -> move(params);
+                case "resign" -> resign();
+                case "legal" -> legal(params);
                 case "leave" -> leave();
                 case "help" -> help();
                 default -> drawBoard();
@@ -30,6 +34,19 @@ public class GameClient {
             return "[ERROR]: " + e.getMessage();
         }
     }
+
+    private String legal(String[] params) {
+        return "board of legal moves";
+    }
+
+    private String resign() {
+        return "resigned from game";
+    }
+
+    private String move(String[] params) {
+        return "move " + params[0];
+    }
+
     private String help() {
         return """
                 redraw - redraws the board for spectator or player
@@ -40,6 +57,8 @@ public class GameClient {
                 leave - quits current game
                 """;
     }
+
+
 
     public String drawBoard() {
         if (clientData.getPlayerColor() != null) {
@@ -60,6 +79,8 @@ public class GameClient {
 
         return "quit game";
     }
+
+
 
 
 }

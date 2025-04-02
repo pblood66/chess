@@ -24,7 +24,6 @@ public class ServerFacadeTests {
 
         var serverUrl = String.format("http://localhost:%d", port);
         facade = new ServerFacade(serverUrl);
-
     }
 
     @AfterAll
@@ -96,7 +95,7 @@ public class ServerFacadeTests {
 
         CreateGameResult result = facade.createGame("testGame", authToken);
         Assertions.assertNotNull(result);
-//        Assertions.assertEquals(1, result.gameID());
+       Assertions.assertEquals(1, result.gameID());
     }
 
     @Test

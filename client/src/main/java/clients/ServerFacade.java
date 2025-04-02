@@ -9,9 +9,9 @@ import models.results.RegisterResult;
 public class ServerFacade {
     private final String serverUrl;
     private final HttpCommunicator http;
+    private WebSocketCommunicator websocket;
 
-    public ServerFacade(String serverUrl)
-    {
+    public ServerFacade(String serverUrl) {
         this.serverUrl = serverUrl;
         http = new HttpCommunicator(serverUrl);
     }
@@ -42,5 +42,16 @@ public class ServerFacade {
 
     public void joinGame(String playerColor, int gameId, String authToken) throws Exception {
         http.joinGame(playerColor, gameId, authToken);
+        openWebSocket();
     }
+
+    private void openWebSocket() {
+        try {
+            websocket = new WebSocketCommunicator(serverUrl);
+        } catch(Exception e) {
+            System.out.println("Error: Could not connect websocket");
+        }
+    }
+
+
 }

@@ -11,7 +11,7 @@ import dataaccess.UserDAO;
 import server.handlers.ClearHandler;
 import server.handlers.GameHandler;
 import server.handlers.UserHandler;
-import server.handlers.WebSocketHandler;
+import server.handlers.websocket.WebSocketHandler;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
@@ -39,7 +39,7 @@ public class Server {
         GameService gameService = new GameService(gameDAO, authDAO);
         gameHandler = new GameHandler(gameService);
 
-        webSocketHandler = new WebSocketHandler();
+        webSocketHandler = new WebSocketHandler(gameDAO, userDAO, authDAO);
     }
 
     public int run(int desiredPort) {
