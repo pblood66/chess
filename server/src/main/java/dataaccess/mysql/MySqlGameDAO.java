@@ -4,6 +4,7 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.DatabaseManager;
 import dataaccess.GameDAO;
+import dataaccess.exceptions.BadRequestException;
 import dataaccess.exceptions.DataAccessException;
 import models.GameData;
 
@@ -107,7 +108,7 @@ public class MySqlGameDAO implements GameDAO {
                 );
             }
         } catch (DataAccessException | SQLException ex) {
-            throw new DataAccessException("Error retrieving game data");
+            throw new BadRequestException("Error retrieving game data");
         }
     }
 

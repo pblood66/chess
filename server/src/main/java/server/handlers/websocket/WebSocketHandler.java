@@ -1,17 +1,18 @@
 package server.handlers.websocket;
 
-import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 
+import dataaccess.exceptions.DataAccessException;
 import models.*;
 import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import websocket.commands.ConnectCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
@@ -45,14 +46,34 @@ public class WebSocketHandler {
         }
     }
 
+    @OnWebSocketError
+    public void onError(Session session, Throwable error) throws Throwable {
+        System.out.println(error.getMessage());
+    }
+
     private void sendMessage(Session session, ServerMessage message) throws IOException {
         session.getRemote().sendString(new Gson().toJson(message));
     }
 
     private void handleConnect(Session session, UserGameCommand command) throws Exception {
         // Server sends a LOAD_GAME message back to the root client.
-        GameData currentGame = gameDAO.getGame(command.getGameID());
-        AuthData auth = authDAO.getAuth(command.getAuthToken());
+        GameData currentGame;
+        AuthData auth;
+        try {
+            currentGame = gameDAO.getGame(command.getGameID());
+        } catch (DataAccessException e) {
+            ErrorMessage errorMessage = new ErrorMessage("Error: Invalid game ID");
+            sendMessage(session, errorMessage);
+            return;
+        }
+
+        try {
+            auth = authDAO.getAuth(command.getAuthToken());
+        } catch (DataAccessException e) {
+            ErrorMessage errorMessage = new ErrorMessage("Error: Unauthorized");
+            sendMessage(session, errorMessage);
+            return;
+        }
         LoadGameMessage loadGame = new LoadGameMessage(currentGame);
 
         sendMessage(session, loadGame);
@@ -70,6 +91,7 @@ public class WebSocketHandler {
         NotificationMessage notification = new NotificationMessage(auth.username() + " has connected as " + role);
 
         gameSessions.broadcast(currentGame.gameID(), notification, command.getAuthToken());
+
     }
 
     private void handleLeave(Session session, UserGameCommand command) throws Exception {
