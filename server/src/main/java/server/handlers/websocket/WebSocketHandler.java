@@ -108,10 +108,34 @@ public class WebSocketHandler {
         gameSessions.broadcast(currentGame.gameID(), notification, authToken);
     }
 
-    private void handleResign(Session session, UserGameCommand command) {
+    private void handleResign(Session session, UserGameCommand command) throws Exception {
+        try {
+            if (!isPlayer(command)) {
+                ErrorMessage error = new ErrorMessage("Error: Observer can't resign game");
+                sendMessage(session, error);
+                return;
+            }
 
+            // TODO: mark game as over
+            AuthData auth = authDAO.getAuth(command.getAuthToken());
+            NotificationMessage resignMessage = new NotificationMessage("");
+
+            gameSessions.broadcast(command.getGameID(), resignMessage);
+        } catch (DataAccessException ex) {
+            onError(session, ex);
+        }
     }
 
     private void handleMove(Session session, UserGameCommand command) {
+    }
+
+    private boolean isPlayer(UserGameCommand command) throws Exception {
+        int gameID = command.getGameID();
+        String authToken = command.getAuthToken();
+
+        AuthData auth = authDAO.getAuth(authToken);
+        GameData currentGame = gameDAO.getGame(gameID);
+
+        return currentGame.whiteUsername().equals(auth.username()) || currentGame.blackUsername().equals(auth.username());
     }
 }
