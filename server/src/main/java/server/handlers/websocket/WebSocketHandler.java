@@ -102,6 +102,7 @@ public class WebSocketHandler {
         }
 
         gameDAO.updateGame(currentGame);
+        gameSessions.removeSession(gameId, authToken);
 
         NotificationMessage notification = new NotificationMessage(auth.username() + " has left the game");
         gameSessions.broadcast(currentGame.gameID(), notification, authToken);
