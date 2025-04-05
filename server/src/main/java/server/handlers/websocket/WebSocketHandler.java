@@ -1,5 +1,9 @@
 package server.handlers.websocket;
 
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
@@ -11,6 +15,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
@@ -40,7 +45,7 @@ public class WebSocketHandler {
 
         switch (command.getCommandType()) {
             case CONNECT -> handleConnect(session, command);
-            case MAKE_MOVE -> handleMove(session, command);
+            case MAKE_MOVE -> handleMove(session, new Gson().fromJson(message, MakeMoveCommand.class));
             case RESIGN -> handleResign(session, command);
             case LEAVE -> handleLeave(session, command);
         }
@@ -61,23 +66,27 @@ public class WebSocketHandler {
         try {
             GameData currentGame = gameDAO.getGame(command.getGameID());
             AuthData auth = authDAO.getAuth(command.getAuthToken());
-
-            LoadGameMessage loadGame = new LoadGameMessage(currentGame);
-
-            sendMessage(session, loadGame);
-            gameSessions.addSession(currentGame.gameID(), command.getAuthToken(), session);
+            ChessGame.TeamColor boardOrientation;
 
             String role;
             if (auth.username().equals(currentGame.whiteUsername())) {
                 role = "white";
+                boardOrientation = ChessGame.TeamColor.WHITE;
             } else if (auth.username().equals(currentGame.blackUsername())) {
                 role = "black";
+                boardOrientation = ChessGame.TeamColor.BLACK;
             } else {
                 role = "observer";
+                boardOrientation = ChessGame.TeamColor.WHITE;
             }
 
-            NotificationMessage notification = new NotificationMessage(auth.username() + " has connected as " + role);
+            LoadGameMessage loadGame = new LoadGameMessage(currentGame, boardOrientation);
 
+            sendMessage(session, loadGame);
+            gameSessions.addSession(currentGame.gameID(), command.getAuthToken(), session);
+
+            NotificationMessage notification = new NotificationMessage(auth.username() + " has connected as " + role);
+            System.out.println("Player Joined");
             gameSessions.broadcast(currentGame.gameID(), notification, command.getAuthToken());
         } catch (DataAccessException ex) {
             onError(session, ex);
@@ -95,10 +104,10 @@ public class WebSocketHandler {
         String username = auth.username();
 
         if (currentGame.whiteUsername().equals(username)) {
-            currentGame.setWhiteUsername(null);
+            currentGame = currentGame.setWhiteUsername("");
         }
         else if (currentGame.blackUsername().equals(username)) {
-            currentGame.setBlackUsername(null);
+            currentGame = currentGame.setBlackUsername("");
         }
 
         gameDAO.updateGame(currentGame);
@@ -111,14 +120,21 @@ public class WebSocketHandler {
     private void handleResign(Session session, UserGameCommand command) throws Exception {
         try {
             if (!isPlayer(command)) {
-                ErrorMessage error = new ErrorMessage("Error: Observer can't resign game");
-                sendMessage(session, error);
-                return;
+                throw new DataAccessException("Error: Observer can't resign game");
             }
 
             // TODO: mark game as over
             AuthData auth = authDAO.getAuth(command.getAuthToken());
             NotificationMessage resignMessage = new NotificationMessage("");
+
+            GameData game = gameDAO.getGame(command.getGameID());
+
+            if (isGameOver(game)) {
+                throw new DataAccessException("Error: Game Over");
+            }
+
+            game.game().setGameOver(true);
+            gameDAO.updateGame(game);
 
             gameSessions.broadcast(command.getGameID(), resignMessage);
         } catch (DataAccessException ex) {
@@ -126,7 +142,49 @@ public class WebSocketHandler {
         }
     }
 
-    private void handleMove(Session session, UserGameCommand command) {
+    private void handleMove(Session session, MakeMoveCommand command) throws Exception {
+        try {
+            if (!isPlayer(command)) {
+                throw new InvalidMoveException("Error: Observer can't move piece");
+            }
+
+            ChessMove move = command.getMove();
+            int gameID = command.getGameID();
+            String authToken = command.getAuthToken();
+
+            GameData currentGame = gameDAO.getGame(gameID);
+            AuthData auth = authDAO.getAuth(authToken);
+
+            if (isGameOver(currentGame)) {
+                throw new InvalidMoveException("Error: Game Over");
+            }
+
+            // make sure move isn't on opponent's piece
+            ChessGame.TeamColor playerColor = currentGame.whiteUsername().equals(auth.username())
+                    ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
+
+            ChessPiece piece = currentGame.game().getBoard().getPiece(move.getStartPosition());
+            if (piece.getTeamColor() != playerColor) {
+                throw new InvalidMoveException("Error: cannot move opponent's piece");
+            }
+
+            // update move to board
+            currentGame.game().makeMove(move);
+            gameDAO.updateGame(currentGame);
+
+            LoadGameMessage loadGame = new LoadGameMessage(currentGame, playerColor);
+            gameSessions.broadcast(gameID, loadGame);
+
+            NotificationMessage notification = new NotificationMessage(move.toString());
+            gameSessions.broadcast(gameID, notification, authToken);
+
+        } catch (DataAccessException | InvalidMoveException ex) {
+            onError(session, ex);
+        }
+    }
+
+    private boolean isGameOver(GameData game) {
+        return game.game().isGameOver();
     }
 
     private boolean isPlayer(UserGameCommand command) throws Exception {

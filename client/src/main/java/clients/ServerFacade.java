@@ -4,6 +4,7 @@ import models.results.CreateGameResult;
 import models.results.ListGamesResult;
 import models.results.LoginResult;
 import models.results.RegisterResult;
+import websocket.commands.UserGameCommand;
 
 
 public class ServerFacade {
@@ -43,6 +44,26 @@ public class ServerFacade {
     public void joinGame(String playerColor, int gameId, String authToken) throws Exception {
         http.joinGame(playerColor, gameId, authToken);
         openWebSocket();
+        UserGameCommand connect = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameId);
+        websocket.sendMessage(connect.toJson());
+    }
+
+    public void resign(String authToken, int gameID) throws Exception {
+        if (websocket != null) {
+            websocket.resign(authToken, gameID);
+        }
+    }
+
+    public void leaveGame(String authToken, int gameID) throws Exception {
+        if (websocket != null) {
+            websocket.leave(authToken, gameID);
+        }
+    }
+
+    public void observe(String authToken, int gameID) throws Exception {
+        openWebSocket();
+        UserGameCommand connect = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
+        websocket.sendMessage(connect.toJson());
     }
 
     private void openWebSocket() {

@@ -18,6 +18,23 @@ public class ChessPosition {
         this.col = col;
     }
 
+    public ChessPosition(String position) {
+        if (position.length() != 2) {
+            throw new IllegalArgumentException("Invalid position format.");
+        }
+
+        char colChar = Character.toLowerCase(position.charAt(0));
+        char rowChar = position.charAt(1);
+
+        // Ensure first char is letter a-h and second is digit 1-8
+        if (colChar < 'a' || colChar > 'h' || rowChar < '1' || rowChar > '8') {
+            throw new IllegalArgumentException("Invalid column or row character.");
+        }
+
+        this.row = rowChar - '0';
+        this.col = colChar - 'a' + 1;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {

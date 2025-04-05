@@ -1,9 +1,14 @@
 package clients;
 
+import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import ui.BoardUi;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 public class GameClient {
     private ServerFacade server;
@@ -36,14 +41,28 @@ public class GameClient {
     }
 
     private String legal(String[] params) {
-        return "board of legal moves";
+        ChessPosition position = new ChessPosition(params[0]);
+
+        Collection<ChessMove> valid = clientData.getCurrentGame().game().validMoves(position);
+        ChessBoard currentBoard = clientData.getCurrentGame().game().getBoard();
+        ChessGame.TeamColor orientation = clientData.getPlayerColor();
+
+        return BoardUi.drawBoard(currentBoard, orientation, valid.toArray(new ChessMove[0]));
     }
 
-    private String resign() {
+    private String resign() throws Exception {
+        server.resign(clientData.getAuthToken(), clientData.getCurrentGame().gameID());
         return "resigned from game";
     }
 
     private String move(String[] params) {
+        if (params.length > 2) {
+            throw new IllegalArgumentException("<position 1> <position 2>");
+        }
+
+        ChessPosition firstPosition = new ChessPosition(params[0]);
+        ChessPosition secondPosition = new ChessPosition(params[1]);
+
         return "move " + params[0];
     }
 
@@ -72,10 +91,12 @@ public class GameClient {
         }
     }
 
-    private String leave() {
+    private String leave() throws Exception{
+        server.leaveGame(clientData.getAuthToken(), clientData.getCurrentGame().gameID());
         clientData.setPlayerColor(null);
         clientData.setCurrentGame(null);
         clientData.setState(ClientData.ClientState.LOGGED_IN);
+
 
         return "quit game";
     }

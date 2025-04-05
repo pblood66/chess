@@ -1,9 +1,6 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
 import static ui.EscapeSequences.*;
 
@@ -11,15 +8,8 @@ public class BoardUi {
     private static final String[] COLUMN_HEADERS = {"\u2003a ", "\u2003b ", "\u2003c ", "\u2003d ", "\u2003e ", "\u2003f ",
             "\u2003g ", "\u2003h "};
 
-    public static void main(String[] args) {
-        ChessBoard board = new ChessBoard();
-        board.resetBoard();
-        System.out.println(drawBoard(board, ChessGame.TeamColor.WHITE));
-        System.out.println(drawBoard(board, ChessGame.TeamColor.BLACK));
 
-    }
-
-    public static String drawBoard(ChessBoard board, ChessGame.TeamColor playerColor) {
+    public static String drawBoard(ChessBoard board, ChessGame.TeamColor playerColor, ChessMove... move) {
         StringBuilder builder = new StringBuilder();
 
 
@@ -53,7 +43,7 @@ public class BoardUi {
 
     private static String setTile(int row, int col, ChessPiece piece) {
         String tile = (row + col) % 2 == 0 ? SET_BG_COLOR_WHITE : SET_BG_COLOR_BLACK;
-
+        // TODO: add highlight legal moves
         if (piece != null) {
             tile += getPieceString(piece.getPieceType(), piece.getTeamColor());
         } else {

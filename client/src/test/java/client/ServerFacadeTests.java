@@ -5,6 +5,7 @@ import models.results.*;
 import org.junit.jupiter.api.*;
 import server.Server;
 import clients.ServerFacade;
+import ui.Repl;
 
 
 public class ServerFacadeTests {
@@ -121,7 +122,7 @@ public class ServerFacadeTests {
 
     @Test
     public void joinGamePositiveTest() throws Exception {
-            RegisterResult registerResult = facade.register(USERNAME, PASSWORD, EMAIL);
+        RegisterResult registerResult = facade.register(USERNAME, PASSWORD, EMAIL);
 
         String authToken = registerResult.authToken();
 
@@ -135,5 +136,16 @@ public class ServerFacadeTests {
     public void joinGameNegativeTest() throws Exception {
         JoinGameRequest request = new JoinGameRequest("Bad Auth Token", "testGame", 1);
         Assertions.assertThrows(Exception.class, () -> facade.joinGame("request", 1, ""));
+    }
+
+    @Test
+    public void resignGameTest() throws Exception {
+        RegisterResult registerResult = facade.register(USERNAME, PASSWORD, EMAIL);
+        String authToken = registerResult.authToken();
+        CreateGameResult createGameResult = facade.createGame("testGame", authToken);
+        int gameId = createGameResult.gameID();
+
+        facade.joinGame("WHITE", gameId, authToken);
+        
     }
 }

@@ -34,8 +34,6 @@ public class PostLoginClient {
                     return games.toString();
                 case "join":
                     joinGame(params, clientData.getAuthToken());
-                    System.out.println(BoardUi.drawBoard(new ChessGame().getBoard(), ChessGame.TeamColor.WHITE));
-                    System.out.println(BoardUi.drawBoard(new ChessGame().getBoard(), ChessGame.TeamColor.BLACK));
 
                     return "Joined game: " + params[0];
                 case "observe":
@@ -130,20 +128,17 @@ public class PostLoginClient {
 
         int gameId = Integer.parseInt(params[0]);
 
+        server.observe(clientData.getAuthToken(), gameId);
+        clientData.setState(ClientData.ClientState.IN_GAME);
         for (var game : games) {
             if (game.gameID() == gameId) {
-
-                String observe = "Observing Game: " + gameId + "\n" +
-                        BoardUi.drawBoard(game.game().getBoard(), ChessGame.TeamColor.WHITE) +
-                        "\n" +
-                        BoardUi.drawBoard(game.game().getBoard(), ChessGame.TeamColor.BLACK);
-                clientData.setState(ClientData.ClientState.IN_GAME);
                 clientData.setCurrentGame(game);
-
-                return observe;
+                clientData.setPlayerColor(ChessGame.TeamColor.WHITE);
             }
         }
 
-        throw new Exception("Could not find Game: " + gameId);
+        return "Observing Game: " + gameId;
+//
+//        throw new Exception("Could not find Game: " + gameId);
     }
 }
