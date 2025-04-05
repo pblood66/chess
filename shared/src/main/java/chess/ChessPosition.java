@@ -31,7 +31,7 @@ public class ChessPosition {
             throw new IllegalArgumentException("Invalid column or row character.");
         }
 
-        this.row = rowChar - '0';
+        this.row =  8 - (rowChar - '1');
         this.col = colChar - 'a' + 1;
     }
 

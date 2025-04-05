@@ -2,6 +2,10 @@ package ui;
 
 import chess.*;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+
 import static ui.EscapeSequences.*;
 
 public class BoardUi {
@@ -11,8 +15,6 @@ public class BoardUi {
 
     public static String drawBoard(ChessBoard board, ChessGame.TeamColor playerColor, ChessMove... move) {
         StringBuilder builder = new StringBuilder();
-
-
         int startRow = (playerColor == ChessGame.TeamColor.WHITE) ? 0 : 7;
         int endRow = (playerColor == ChessGame.TeamColor.WHITE) ? 8 : -1;
         int step = (playerColor == ChessGame.TeamColor.WHITE) ? 1 : -1;
@@ -20,13 +22,22 @@ public class BoardUi {
         builder.append(SET_TEXT_COLOR_BLUE);
         builder.append(getColumnHeaders(playerColor));
 
+
+        HashSet<ChessPosition> valid = new HashSet<>();
+        if (move != null) {
+            for (ChessMove m : move) {
+                valid.add(m.getEndPosition());
+            }
+        }
+
         for (int row = startRow; row != endRow; row += step) {
             builder.append(SET_BG_COLOR_DARK_GREY)
                     .append(" ").append(8 - row).append(" ")
                     .append(RESET_BG_COLOR);
 
             for (int col = startRow; col != endRow; col += step) {
-                builder.append(setTile(col, row, board.getPiece(new ChessPosition(row + 1, col + 1))));
+                ChessPosition position = new ChessPosition(row + 1, col + 1);
+                builder.append(setTile(position, board.getPiece(position), valid));
             }
 
             builder.append(SET_BG_COLOR_DARK_GREY)
@@ -41,14 +52,21 @@ public class BoardUi {
         return builder.toString();
     }
 
-    private static String setTile(int row, int col, ChessPiece piece) {
-        String tile = (row + col) % 2 == 0 ? SET_BG_COLOR_WHITE : SET_BG_COLOR_BLACK;
-        // TODO: add highlight legal moves
-        if (piece != null) {
-            tile += getPieceString(piece.getPieceType(), piece.getTeamColor());
+    private static String setTile(ChessPosition position, ChessPiece piece, Collection<ChessPosition> highlights) {
+        String tile;
+        boolean isHighlighted = highlights.contains(position);
+
+        boolean isLightSquare = (position.getArrayRow() + position.getArrayCol()) % 2 == 0;
+
+        if (isHighlighted) {
+            tile = isLightSquare ? SET_BG_COLOR_GREEN : SET_BG_COLOR_DARK_GREEN;
         } else {
-            tile += EMPTY;
+            tile = isLightSquare ? SET_BG_COLOR_WHITE : SET_BG_COLOR_BLACK;
         }
+
+        tile += (piece != null)
+                ? getPieceString(piece.getPieceType(), piece.getTeamColor())
+                : EMPTY;
 
         tile += RESET_BG_COLOR;
 

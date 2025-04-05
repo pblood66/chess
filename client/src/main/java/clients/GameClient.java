@@ -47,6 +47,10 @@ public class GameClient {
         ChessBoard currentBoard = clientData.getCurrentGame().game().getBoard();
         ChessGame.TeamColor orientation = clientData.getPlayerColor();
 
+        if (valid == null || valid.isEmpty()) {
+            return BoardUi.drawBoard(currentBoard, orientation);
+        }
+
         return BoardUi.drawBoard(currentBoard, orientation, valid.toArray(new ChessMove[0]));
     }
 
