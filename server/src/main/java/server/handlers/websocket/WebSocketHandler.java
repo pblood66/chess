@@ -102,6 +102,7 @@ public class WebSocketHandler {
         AuthData auth = authDAO.getAuth(authToken);
 
         String username = auth.username();
+        System.out.println("deleted " + username);
 
         if (currentGame.whiteUsername().equals(username)) {
             currentGame = currentGame.setWhiteUsername("");

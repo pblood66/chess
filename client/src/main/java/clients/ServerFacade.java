@@ -43,7 +43,7 @@ public class ServerFacade {
 
     public void joinGame(String playerColor, int gameId, String authToken) throws Exception {
         http.joinGame(playerColor, gameId, authToken);
-        openWebSocket();
+        this.websocket = new WebSocketCommunicator(serverUrl);
         UserGameCommand connect = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameId);
         websocket.sendMessage(connect.toJson());
     }
@@ -55,9 +55,11 @@ public class ServerFacade {
     }
 
     public void leaveGame(String authToken, int gameID) throws Exception {
-        if (websocket != null) {
-            websocket.leave(authToken, gameID);
-        }
+        System.out.println("Server Facade Leaving Game");
+        UserGameCommand leave = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
+        System.out.println("attempting leave...");
+        websocket.sendMessage(leave.toJson());
+        websocket = null;
     }
 
     public void observe(String authToken, int gameID) throws Exception {

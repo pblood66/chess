@@ -6,15 +6,18 @@ import chess.ChessMove;
 import chess.ChessPosition;
 import ui.BoardUi;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 public class GameClient {
-    private ServerFacade server;
-    private ClientData clientData;
+    private final ServerFacade server;
+    private final ClientData clientData;
 
     public GameClient(String serverUrl, ClientData clientData) {
+        // TODO: change the way that GameClient gets server facade from this to getting it from the post login client
+        // will cause all of the websocket stuff to not work
         this.server = new ServerFacade(serverUrl);
         this.clientData = clientData;
     }
@@ -43,15 +46,18 @@ public class GameClient {
     private String legal(String[] params) {
         ChessPosition position = new ChessPosition(params[0]);
 
-        Collection<ChessMove> valid = clientData.getCurrentGame().game().validMoves(position);
+        Collection<ChessMove> validMoves = clientData.getCurrentGame().game().validMoves(position);
         ChessBoard currentBoard = clientData.getCurrentGame().game().getBoard();
         ChessGame.TeamColor orientation = clientData.getPlayerColor();
 
-        if (valid == null || valid.isEmpty()) {
-            return BoardUi.drawBoard(currentBoard, orientation);
+        ArrayList<ChessPosition> highlightedMoves = new ArrayList<>();
+        highlightedMoves.add(position);
+
+        for (ChessMove move : validMoves) {
+            highlightedMoves.add(move.getEndPosition());
         }
 
-        return BoardUi.drawBoard(currentBoard, orientation, valid.toArray(new ChessMove[0]));
+        return BoardUi.drawBoard(currentBoard, orientation, highlightedMoves);
     }
 
     private String resign() throws Exception {
@@ -85,17 +91,18 @@ public class GameClient {
 
     public String drawBoard() {
         if (clientData.getPlayerColor() != null) {
-            return BoardUi.drawBoard(clientData.getCurrentGame().game().getBoard(), clientData.getPlayerColor());
+            return BoardUi.drawBoard(clientData.getCurrentGame().game().getBoard(), clientData.getPlayerColor(), null);
         }
         else {
             return "Observing Game: " + clientData.getCurrentGame().gameID() + "\n" +
-                    BoardUi.drawBoard(clientData.getCurrentGame().game().getBoard(), ChessGame.TeamColor.WHITE) +
+                    BoardUi.drawBoard(clientData.getCurrentGame().game().getBoard(), ChessGame.TeamColor.WHITE, null) +
                     "\n" +
-                    BoardUi.drawBoard(clientData.getCurrentGame().game().getBoard(), ChessGame.TeamColor.BLACK);
+                    BoardUi.drawBoard(clientData.getCurrentGame().game().getBoard(), ChessGame.TeamColor.BLACK, null);
         }
     }
 
     private String leave() throws Exception{
+        System.out.println("Leaving game");
         server.leaveGame(clientData.getAuthToken(), clientData.getCurrentGame().gameID());
         clientData.setPlayerColor(null);
         clientData.setCurrentGame(null);
@@ -104,8 +111,4 @@ public class GameClient {
 
         return "quit game";
     }
-
-
-
-
 }

@@ -42,7 +42,7 @@ public class WebSocketCommunicator extends Endpoint {
         System.out.print(ERASE_LINE + '\r');
         if (message.contains("LOAD_GAME")) {
             LoadGameMessage loadGame = new Gson().fromJson(message, LoadGameMessage.class);
-            System.out.println(BoardUi.drawBoard(loadGame.getGame().game().getBoard(), loadGame.getOrientation()));
+            System.out.println(BoardUi.drawBoard(loadGame.getGame().game().getBoard(), loadGame.getOrientation(), null));
             System.out.print(SET_TEXT_COLOR_GREEN + "[IN GAME]" + RESET_TEXT_COLOR + " >>> " + SET_TEXT_COLOR_GREEN);
         }
         else if (message.contains("NOTIFICATION")) {

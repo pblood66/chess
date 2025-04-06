@@ -5,6 +5,7 @@ import chess.*;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 import static ui.EscapeSequences.*;
 
@@ -13,7 +14,7 @@ public class BoardUi {
             "\u2003g ", "\u2003h "};
 
 
-    public static String drawBoard(ChessBoard board, ChessGame.TeamColor playerColor, ChessMove... move) {
+    public static String drawBoard(ChessBoard board, ChessGame.TeamColor playerColor, List<ChessPosition> moves) {
         StringBuilder builder = new StringBuilder();
         int startRow = (playerColor == ChessGame.TeamColor.WHITE) ? 0 : 7;
         int endRow = (playerColor == ChessGame.TeamColor.WHITE) ? 8 : -1;
@@ -22,14 +23,6 @@ public class BoardUi {
         builder.append(SET_TEXT_COLOR_BLUE);
         builder.append(getColumnHeaders(playerColor));
 
-
-        HashSet<ChessPosition> valid = new HashSet<>();
-        if (move != null) {
-            for (ChessMove m : move) {
-                valid.add(m.getEndPosition());
-            }
-        }
-
         for (int row = startRow; row != endRow; row += step) {
             builder.append(SET_BG_COLOR_DARK_GREY)
                     .append(" ").append(8 - row).append(" ")
@@ -37,7 +30,7 @@ public class BoardUi {
 
             for (int col = startRow; col != endRow; col += step) {
                 ChessPosition position = new ChessPosition(row + 1, col + 1);
-                builder.append(setTile(position, board.getPiece(position), valid));
+                builder.append(setTile(position, board.getPiece(position), moves));
             }
 
             builder.append(SET_BG_COLOR_DARK_GREY)
@@ -54,7 +47,10 @@ public class BoardUi {
 
     private static String setTile(ChessPosition position, ChessPiece piece, Collection<ChessPosition> highlights) {
         String tile;
-        boolean isHighlighted = highlights.contains(position);
+        boolean isHighlighted = false;
+        if (highlights != null && !highlights.isEmpty()) {
+            isHighlighted = highlights.contains(position);
+        }
 
         boolean isLightSquare = (position.getArrayRow() + position.getArrayCol()) % 2 == 0;
 
