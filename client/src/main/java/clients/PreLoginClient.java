@@ -6,8 +6,8 @@ public class PreLoginClient {
     private ServerFacade server;
     private final ClientData clientData;
 
-    public PreLoginClient(String serverUrl, ClientData clientData) {
-        server = new ServerFacade(serverUrl);
+    public PreLoginClient(ServerFacade server, ClientData clientData) {
+        this.server = server;
         this.clientData = clientData;
     }
 

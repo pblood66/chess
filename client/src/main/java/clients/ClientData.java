@@ -15,7 +15,7 @@ public class ClientData {
 
     private ClientState state;
 
-    public ClientData() {
+    public ClientData(String serverUrl) {
         this.authToken = "";
         this.state = ClientState.LOGGED_OUT;
     }

@@ -15,10 +15,8 @@ public class GameClient {
     private final ServerFacade server;
     private final ClientData clientData;
 
-    public GameClient(String serverUrl, ClientData clientData) {
-        // TODO: change the way that GameClient gets server facade from this to getting it from the post login client
-        // will cause all of the websocket stuff to not work
-        this.server = new ServerFacade(serverUrl);
+    public GameClient(ServerFacade server, ClientData clientData) {
+        this.server = server;
         this.clientData = clientData;
     }
 

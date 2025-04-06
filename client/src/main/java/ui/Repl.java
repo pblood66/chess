@@ -1,9 +1,6 @@
 package ui;
 
-import clients.ClientData;
-import clients.GameClient;
-import clients.PostLoginClient;
-import clients.PreLoginClient;
+import clients.*;
 
 import java.util.Scanner;
 
@@ -16,12 +13,14 @@ public class Repl {
     private final GameClient gameClient;
 
     private final ClientData clientData;
+    private final ServerFacade server;
 
     public Repl(String serverUrl) {
-        clientData = new ClientData();
-        preLogin = new PreLoginClient(serverUrl, clientData);
-        postLogin = new PostLoginClient(serverUrl, clientData);
-        gameClient = new GameClient(serverUrl, clientData);
+        clientData = new ClientData(serverUrl);
+        this.server = new ServerFacade(serverUrl);
+        preLogin = new PreLoginClient(server, clientData);
+        postLogin = new PostLoginClient(server, clientData);
+        gameClient = new GameClient(server, clientData);
     }
 
     public void run() {

@@ -4,6 +4,7 @@ import chess.ChessGame;
 import models.results.CreateGameResult;
 import models.results.ListGamesResult;
 import ui.BoardUi;
+import websocket.messages.ServerMessage;
 
 import java.util.Arrays;
 
@@ -11,8 +12,8 @@ public class PostLoginClient {
     private ServerFacade server;
     private ClientData clientData;
 
-    public PostLoginClient(String serverUrl, ClientData clientData) {
-        server = new ServerFacade(serverUrl);
+    public PostLoginClient(ServerFacade server, ClientData clientData) {
+        this.server = server;
         this.clientData = clientData;
     }
 
