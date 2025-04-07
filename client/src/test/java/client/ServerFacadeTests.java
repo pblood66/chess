@@ -1,5 +1,6 @@
 package client;
 
+import clients.ClientData;
 import models.requests.*;
 import models.results.*;
 import org.junit.jupiter.api.*;
@@ -24,7 +25,7 @@ public class ServerFacadeTests {
         System.out.println("Started test HTTP server on " + port);
 
         var serverUrl = String.format("http://localhost:%d", port);
-        facade = new ServerFacade(serverUrl);
+        facade = new ServerFacade(serverUrl, new ClientData(serverUrl));
     }
 
     @AfterAll

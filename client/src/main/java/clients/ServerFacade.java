@@ -1,9 +1,11 @@
 package clients;
 
+import chess.ChessMove;
 import models.results.CreateGameResult;
 import models.results.ListGamesResult;
 import models.results.LoginResult;
 import models.results.RegisterResult;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 
 
@@ -11,10 +13,12 @@ public class ServerFacade {
     private final String serverUrl;
     private final HttpCommunicator http;
     private WebSocketCommunicator websocket;
+    private final ClientData clientData;
 
-    public ServerFacade(String serverUrl) {
+    public ServerFacade(String serverUrl, ClientData clientData) {
         this.serverUrl = serverUrl;
         http = new HttpCommunicator(serverUrl);
+        this.clientData = clientData;
     }
 
     public void clear() throws Exception {
@@ -43,7 +47,7 @@ public class ServerFacade {
 
     public void joinGame(String playerColor, int gameId, String authToken) throws Exception {
         http.joinGame(playerColor, gameId, authToken);
-        this.websocket = new WebSocketCommunicator(serverUrl);
+        this.websocket = new WebSocketCommunicator(serverUrl, clientData);
         UserGameCommand connect = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameId);
         websocket.sendMessage(connect.toJson());
     }
@@ -55,9 +59,7 @@ public class ServerFacade {
     }
 
     public void leaveGame(String authToken, int gameID) throws Exception {
-        System.out.println("Server Facade Leaving Game");
         UserGameCommand leave = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
-        System.out.println("attempting leave...");
         websocket.sendMessage(leave.toJson());
         websocket = null;
     }
@@ -68,9 +70,14 @@ public class ServerFacade {
         websocket.sendMessage(connect.toJson());
     }
 
+    public void makeMove(String authToken, int gameID, ChessMove move) throws Exception {
+        MakeMoveCommand moveCommand = new MakeMoveCommand(authToken, gameID, move);
+        websocket.sendMessage(moveCommand.toJson());
+    }
+
     private void openWebSocket() {
         try {
-            websocket = new WebSocketCommunicator(serverUrl);
+            websocket = new WebSocketCommunicator(serverUrl, clientData);
         } catch(Exception e) {
             System.out.println("Error: Could not connect websocket");
         }

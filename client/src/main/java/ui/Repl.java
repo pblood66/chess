@@ -17,7 +17,7 @@ public class Repl {
 
     public Repl(String serverUrl) {
         clientData = new ClientData(serverUrl);
-        this.server = new ServerFacade(serverUrl);
+        this.server = new ServerFacade(serverUrl, clientData);
         preLogin = new PreLoginClient(server, clientData);
         postLogin = new PostLoginClient(server, clientData);
         gameClient = new GameClient(server, clientData);

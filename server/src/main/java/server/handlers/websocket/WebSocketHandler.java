@@ -43,6 +43,8 @@ public class WebSocketHandler {
     public void onMessage(Session session, String message) throws Exception {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
 
+        System.out.println(message);
+
         switch (command.getCommandType()) {
             case CONNECT -> handleConnect(session, command);
             case MAKE_MOVE -> handleMove(session, new Gson().fromJson(message, MakeMoveCommand.class));
@@ -124,9 +126,8 @@ public class WebSocketHandler {
                 throw new DataAccessException("Error: Observer can't resign game");
             }
 
-            // TODO: mark game as over
             AuthData auth = authDAO.getAuth(command.getAuthToken());
-            NotificationMessage resignMessage = new NotificationMessage("");
+            NotificationMessage resignMessage = new NotificationMessage(auth.username() + " has resigned");
 
             GameData game = gameDAO.getGame(command.getGameID());
 
@@ -164,6 +165,7 @@ public class WebSocketHandler {
             ChessGame.TeamColor playerColor = currentGame.whiteUsername().equals(auth.username())
                     ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
 
+
             ChessPiece piece = currentGame.game().getBoard().getPiece(move.getStartPosition());
             if (piece.getTeamColor() != playerColor) {
                 throw new InvalidMoveException("Error: cannot move opponent's piece");
@@ -176,7 +178,8 @@ public class WebSocketHandler {
             LoadGameMessage loadGame = new LoadGameMessage(currentGame, playerColor);
             gameSessions.broadcast(gameID, loadGame);
 
-            NotificationMessage notification = new NotificationMessage(move.toString());
+            NotificationMessage notification = new NotificationMessage("Player " + auth.username() + " moved " +
+                    move.getStartPosition().toString() + " to " + move.getEndPosition().toString());
             gameSessions.broadcast(gameID, notification, authToken);
 
         } catch (DataAccessException | InvalidMoveException ex) {

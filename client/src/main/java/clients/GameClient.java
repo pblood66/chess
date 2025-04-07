@@ -1,9 +1,6 @@
 package clients;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
+import chess.*;
 import ui.BoardUi;
 
 import java.util.ArrayList;
@@ -63,13 +60,25 @@ public class GameClient {
         return "resigned from game";
     }
 
-    private String move(String[] params) {
-        if (params.length > 2) {
+    private String move(String[] params) throws Exception {
+        if (params.length < 2) {
             throw new IllegalArgumentException("<position 1> <position 2>");
         }
 
         ChessPosition firstPosition = new ChessPosition(params[0]);
         ChessPosition secondPosition = new ChessPosition(params[1]);
+        ChessMove move;
+        if (params.length == 3) {
+            ChessPiece.PieceType type = ChessPiece.PieceType.fromString(params[2]);
+            move = new ChessMove(firstPosition, secondPosition, type);
+        }
+        else {
+            move = new ChessMove(firstPosition, secondPosition, null);
+        }
+
+        System.out.println("TEST");
+
+        server.makeMove(clientData.getAuthToken(), clientData.getCurrentGame().gameID(), move);
 
         return "move " + params[0];
     }

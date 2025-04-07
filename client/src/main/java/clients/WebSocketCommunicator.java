@@ -16,14 +16,16 @@ import static ui.EscapeSequences.*;
 
 public class WebSocketCommunicator extends Endpoint {
     private Session session;
+    private final ClientData clientData;
 
 
-    public WebSocketCommunicator(String serverUrl) throws Exception {
+    public WebSocketCommunicator(String serverUrl, ClientData clientData) throws Exception {
         String url = serverUrl.replace("http", "ws");
         URI socketURI = new URI(url + "/ws");
 
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
         this.session = container.connectToServer(this, socketURI);
+        this.clientData = clientData;
 
         this.session.addMessageHandler(new MessageHandler.Whole<String>() {
             @Override
@@ -38,11 +40,10 @@ public class WebSocketCommunicator extends Endpoint {
     }
 
     public void handleMessage(String message) {
-        ServerMessage serverMessage;
         System.out.print(ERASE_LINE + '\r');
         if (message.contains("LOAD_GAME")) {
             LoadGameMessage loadGame = new Gson().fromJson(message, LoadGameMessage.class);
-            System.out.println(BoardUi.drawBoard(loadGame.getGame().game().getBoard(), loadGame.getOrientation(), null));
+            System.out.println(BoardUi.drawBoard(loadGame.getGame().game().getBoard(), clientData.getPlayerColor(), null));
             System.out.print(SET_TEXT_COLOR_GREEN + "[IN GAME]" + RESET_TEXT_COLOR + " >>> " + SET_TEXT_COLOR_GREEN);
         }
         else if (message.contains("NOTIFICATION")) {
@@ -52,13 +53,9 @@ public class WebSocketCommunicator extends Endpoint {
         }
         else if (message.contains("ERROR")) {
             ErrorMessage error = new Gson().fromJson(message, ErrorMessage.class);
+            System.out.println(error.getErrorMessage());
             System.out.print(SET_TEXT_COLOR_GREEN + "[IN GAME]" + RESET_TEXT_COLOR + " >>> " + SET_TEXT_COLOR_GREEN);
         }
-    }
-
-    public void leave(String authToken, int gameID) {
-        UserGameCommand leave = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
-        sendMessage(leave.toJson());
     }
 
     public void resign(String authToken, int gameID) {

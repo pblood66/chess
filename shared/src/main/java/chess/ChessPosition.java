@@ -31,8 +31,8 @@ public class ChessPosition {
             throw new IllegalArgumentException("Invalid column or row character.");
         }
 
-        this.row =  8 - (rowChar - '1');
-        this.col = colChar - 'a' + 1;
+        this.row =  (rowChar - '1') + 1;
+        this.col = colChar - 'a';
     }
 
     @Override
@@ -51,10 +51,9 @@ public class ChessPosition {
 
     @Override
     public String toString() {
-        return "{" +
-                row + ", " +
-                col +
-                '}';
+        char colChar = (char) ('a' + col);
+        char rowChar = (char) ('1' + (row - 1));
+        return "" + colChar + rowChar;
     }
 
     /**

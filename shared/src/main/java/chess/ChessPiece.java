@@ -66,6 +66,16 @@ public class ChessPiece {
             this.value = value;
         }
 
+        public static PieceType fromString(String pieceType) {
+            return switch (pieceType.toLowerCase()) {
+                case "q", "queen" -> QUEEN;
+                case "b", "bishop" -> BISHOP;
+                case "n", "knight" -> KNIGHT;
+                case "r", "rook" -> ROOK;
+                default -> throw new IllegalArgumentException("Invalid piece type: " + pieceType);
+            };
+        }
+
         public char getCharValue() {
             return value;
         }
