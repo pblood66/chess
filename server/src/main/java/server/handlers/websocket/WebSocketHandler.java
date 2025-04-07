@@ -191,8 +191,8 @@ public class WebSocketHandler {
         if (chessGame.isInCheckmate(ChessGame.TeamColor.WHITE) || chessGame.isInCheckmate(ChessGame.TeamColor.BLACK)) {
             chessGame.setGameOver(true);
             String message = chessGame.isInCheckmate(ChessGame.TeamColor.WHITE)
-                    ? "White is in checkmate\nGAME OVER"
-                    : "Black is in checkmate\nGAME OVER";
+                    ? game.whiteUsername() + " is in checkmate\nGAME OVER"
+                    : game.blackUsername() + " is in checkmate\nGAME OVER";
             broadcastGameOver(gameID, message);
             return true;
         }
@@ -215,7 +215,9 @@ public class WebSocketHandler {
         boolean blackInCheck = game.game().isInCheck(ChessGame.TeamColor.BLACK);
 
         if (whiteInCheck || blackInCheck) {
-            String message = whiteInCheck ? "White is in check" : "Black is in check";
+            String message = whiteInCheck
+                    ? game.whiteUsername() + " is in check"
+                    : game.blackUsername() + " is in check";
             gameSessions.broadcast(gameID, new NotificationMessage(message));
         }
     }

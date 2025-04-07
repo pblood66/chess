@@ -16,7 +16,6 @@ public class GameClient {
         this.clientData = clientData;
     }
 
-
     public String eval(String line) {
         String[] tokens = line.split(" ");
         String[] params = tokens.length > 1 ? Arrays.copyOfRange(tokens, 1, tokens.length) : new String[0];
@@ -60,7 +59,7 @@ public class GameClient {
 
     private String move(String[] params) {
         if (params.length < 2) {
-            throw new IllegalArgumentException("<position 1> <position 2>");
+            throw new IllegalArgumentException("<position 1> <position 2> <promotion piece>");
         }
 
         ChessPosition firstPosition = new ChessPosition(params[0]);
@@ -83,7 +82,7 @@ public class GameClient {
         return """
                 redraw - redraws the board for spectator or player
                 help - shows this help message
-                move <position 1> <position 2> - makes move and updates board
+                move <position 1> <position 2> <promotion piece> - makes move and updates board
                 resign - resign game
                 legal <position> -  highlights legal moves of piece
                 leave - quits current game
