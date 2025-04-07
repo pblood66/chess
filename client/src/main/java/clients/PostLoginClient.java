@@ -111,12 +111,6 @@ public class PostLoginClient {
                     Integer.parseInt(params[0]),
                     authToken);
 
-//            for (var game : clientData.getGames()) {
-//                if (game.gameID() == Integer.parseInt(params[0])) {
-//                    clientData.setCurrentGame(game);
-//                }
-//            }
-
             clientData.setPlayerColor(ChessGame.TeamColor.valueOf(params[1]));
             clientData.setState(ClientData.ClientState.IN_GAME);
         } catch(Exception e) {

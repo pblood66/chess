@@ -92,7 +92,6 @@ public class GameClient {
 
 
     public String drawBoard() {
-        // TODO: fix the way clientData stores current gameBoard to have an updated board
         if (clientData.getPlayerColor() != null) {
             return BoardUi.drawBoard(clientData.getCurrentGame().game().getBoard(), clientData.getPlayerColor(), null);
         }

@@ -51,7 +51,6 @@ public class ChessPosition {
 
     @Override
     public String toString() {
-        // TODO: Fix this
         char colChar = (char) (('a' + 8) - col);
         char rowChar = (char) ('1' + (row - 1));
         return "" + colChar + rowChar;

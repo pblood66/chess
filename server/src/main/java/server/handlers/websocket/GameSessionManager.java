@@ -31,7 +31,9 @@ public class GameSessionManager {
 
     public void broadcast(int gameID, ServerMessage message, String... excludeAuthToken) throws IOException {
         ConcurrentHashMap<String, Session> sessions = gameSessions.get(gameID);
-        if (sessions == null) return;
+        if (sessions == null) {
+            return;
+        }
 
         HashSet<String> excludedTokens = new HashSet<>(Arrays.asList(excludeAuthToken));
 
