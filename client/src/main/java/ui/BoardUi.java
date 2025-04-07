@@ -26,6 +26,10 @@ public class BoardUi {
         int endRow = (playerColor == ChessGame.TeamColor.WHITE) ? -1 : 8;
         int step = (playerColor == ChessGame.TeamColor.WHITE) ? -1 : 1;
 
+        int startCol = (playerColor == ChessGame.TeamColor.WHITE) ? 0 : 7;
+        int endCol = (playerColor == ChessGame.TeamColor.WHITE) ? 8 : -1;
+        int colStep = (playerColor == ChessGame.TeamColor.WHITE) ? 1: -1;
+
         builder.append(SET_TEXT_COLOR_BLUE);
         builder.append(getColumnHeaders(playerColor));
 
@@ -34,7 +38,7 @@ public class BoardUi {
                     .append(" ").append(row + 1).append(" ")
                     .append(RESET_BG_COLOR);
 
-            for (int col = startRow; col != endRow; col += step) {
+            for (int col = startCol; col != endCol; col += colStep) {
                 ChessPosition position = new ChessPosition(row + 1, col + 1);
                 builder.append(setTile(position, board.getPiece(position), moves));
             }
