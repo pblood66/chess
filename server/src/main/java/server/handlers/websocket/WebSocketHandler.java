@@ -163,13 +163,14 @@ public class WebSocketHandler {
                 throw new InvalidMoveException("Error: cannot move opponent's piece");
             }
 
+            currentGame.game().makeMove(move);
+
             String userMove = "Player " + auth.username() + " moved " +
                     move.getStartPosition().toString() + " to " + move.getEndPosition().toString();
             NotificationMessage notification = new NotificationMessage(userMove);
             gameSessions.broadcast(gameID, notification, authToken);
 
             // update move to board
-            currentGame.game().makeMove(move);
 
             // check if game is over
             if (!handleGameOver(currentGame, gameID)) {
