@@ -32,7 +32,7 @@ public class ChessPosition {
         }
 
         this.row =  (rowChar - '1') + 1;
-        this.col = colChar - 'a';
+        this.col = 8 - (colChar - 'a');
     }
 
     @Override
@@ -51,6 +51,7 @@ public class ChessPosition {
 
     @Override
     public String toString() {
+        // TODO: Fix this
         char colChar = (char) ('a' + col);
         char rowChar = (char) ('1' + (row - 1));
         return "" + colChar + rowChar;

@@ -25,7 +25,12 @@ public class WebSocketCommunicator extends Endpoint {
         this.session = container.connectToServer(this, socketURI);
         this.clientData = clientData;
 
-        this.session.addMessageHandler((MessageHandler.Whole<String>) this::handleMessage);
+        this.session.addMessageHandler(new MessageHandler.Whole<String>() {
+            @Override
+            public void onMessage(String message) {
+                handleMessage(message);
+            }
+        });
     }
 
     @Override
@@ -36,6 +41,7 @@ public class WebSocketCommunicator extends Endpoint {
         System.out.print(ERASE_LINE + '\r');
         if (message.contains("LOAD_GAME")) {
             LoadGameMessage loadGame = new Gson().fromJson(message, LoadGameMessage.class);
+            clientData.setCurrentGame(loadGame.getGame());
             System.out.println(BoardUi.drawBoard(loadGame.getGame().game().getBoard(), clientData.getPlayerColor(), null));
             System.out.print(SET_TEXT_COLOR_GREEN + "[IN GAME]" + RESET_TEXT_COLOR + " >>> " + SET_TEXT_COLOR_GREEN);
         }

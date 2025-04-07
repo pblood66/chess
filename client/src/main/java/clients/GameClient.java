@@ -55,7 +55,7 @@ public class GameClient {
 
     private String resign() {
         server.resign(clientData.getAuthToken(), clientData.getCurrentGame().gameID());
-        return "resigned from game";
+        return "";
     }
 
     private String move(String[] params) {
@@ -74,11 +74,9 @@ public class GameClient {
             move = new ChessMove(firstPosition, secondPosition, null);
         }
 
-        System.out.println("TEST");
-
         server.makeMove(clientData.getAuthToken(), clientData.getCurrentGame().gameID(), move);
 
-        return "move " + params[0];
+        return "";
     }
 
     private String help() {

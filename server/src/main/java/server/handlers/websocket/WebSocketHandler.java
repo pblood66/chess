@@ -157,26 +157,66 @@ public class WebSocketHandler {
             // make sure move isn't on opponent's piece
             ChessGame.TeamColor playerColor = currentGame.whiteUsername().equals(auth.username())
                     ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
-
-
             ChessPiece piece = currentGame.game().getBoard().getPiece(move.getStartPosition());
+
             if (piece.getTeamColor() != playerColor) {
                 throw new InvalidMoveException("Error: cannot move opponent's piece");
             }
 
+            String userMove = "Player " + auth.username() + " moved " +
+                    move.getStartPosition().toString() + " to " + move.getEndPosition().toString();
+            NotificationMessage notification = new NotificationMessage(userMove);
+            gameSessions.broadcast(gameID, notification, authToken);
+
             // update move to board
             currentGame.game().makeMove(move);
+
+            // check if game is over
+            if (!handleGameOver(currentGame, gameID)) {
+                handleCheckNotification(currentGame, gameID);
+            }
+
             gameDAO.updateGame(currentGame);
 
             LoadGameMessage loadGame = new LoadGameMessage(currentGame);
             gameSessions.broadcast(gameID, loadGame);
-
-            NotificationMessage notification = new NotificationMessage("Player " + auth.username() + " moved " +
-                    move.getStartPosition().toString() + " to " + move.getEndPosition().toString());
-            gameSessions.broadcast(gameID, notification, authToken);
-
         } catch (DataAccessException | InvalidMoveException ex) {
             onError(session, ex);
+        }
+    }
+
+    private boolean handleGameOver(GameData game, int gameID) throws Exception {
+        ChessGame chessGame = game.game();
+
+        if (chessGame.isInCheckmate(ChessGame.TeamColor.WHITE) || chessGame.isInCheckmate(ChessGame.TeamColor.BLACK)) {
+            chessGame.setGameOver(true);
+            String message = chessGame.isInCheckmate(ChessGame.TeamColor.WHITE)
+                    ? "White is in checkmate\nGAME OVER"
+                    : "Black is in checkmate\nGAME OVER";
+            broadcastGameOver(gameID, message);
+            return true;
+        }
+
+        if (chessGame.isInStalemate(ChessGame.TeamColor.WHITE) || chessGame.isInStalemate(ChessGame.TeamColor.BLACK)) {
+            chessGame.setGameOver(true);
+            broadcastGameOver(gameID, "Stalemate\nGAME OVER");
+            return true;
+        }
+
+        return false;
+    }
+
+    private void broadcastGameOver(int gameID, String message) throws Exception {
+        gameSessions.broadcast(gameID, new NotificationMessage(message));
+    }
+
+    private void handleCheckNotification(GameData game, int gameID) throws Exception{
+        boolean whiteInCheck = game.game().isInCheck(ChessGame.TeamColor.WHITE);
+        boolean blackInCheck = game.game().isInCheck(ChessGame.TeamColor.BLACK);
+
+        if (whiteInCheck || blackInCheck) {
+            String message = whiteInCheck ? "White is in check" : "Black is in check";
+            gameSessions.broadcast(gameID, new NotificationMessage(message));
         }
     }
 
