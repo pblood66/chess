@@ -52,25 +52,25 @@ public class ServerFacade {
         websocket.sendMessage(connect.toJson());
     }
 
-    public void resign(String authToken, int gameID) throws Exception {
+    public void resign(String authToken, int gameID) {
         if (websocket != null) {
             websocket.resign(authToken, gameID);
         }
     }
 
-    public void leaveGame(String authToken, int gameID) throws Exception {
+    public void leaveGame(String authToken, int gameID) {
         UserGameCommand leave = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
         websocket.sendMessage(leave.toJson());
         websocket = null;
     }
 
-    public void observe(String authToken, int gameID) throws Exception {
+    public void observe(String authToken, int gameID) {
         openWebSocket();
         UserGameCommand connect = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
         websocket.sendMessage(connect.toJson());
     }
 
-    public void makeMove(String authToken, int gameID, ChessMove move) throws Exception {
+    public void makeMove(String authToken, int gameID, ChessMove move) {
         MakeMoveCommand moveCommand = new MakeMoveCommand(authToken, gameID, move);
         websocket.sendMessage(moveCommand.toJson());
     }

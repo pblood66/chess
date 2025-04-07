@@ -8,6 +8,6 @@ public class Main {
 
         int port = 8080;
         Server s = new Server();
-        s.run(8080);
+        s.run(port);
     }
 }

@@ -6,7 +6,6 @@ import ui.BoardUi;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 public class GameClient {
     private final ServerFacade server;
@@ -29,8 +28,7 @@ public class GameClient {
                 case "resign" -> resign();
                 case "legal" -> legal(params);
                 case "leave" -> leave();
-                case "help" -> help();
-                default -> drawBoard();
+                default -> help();
             };
         }
         catch (Exception e) {
@@ -55,12 +53,12 @@ public class GameClient {
         return BoardUi.drawBoard(currentBoard, orientation, highlightedMoves);
     }
 
-    private String resign() throws Exception {
+    private String resign() {
         server.resign(clientData.getAuthToken(), clientData.getCurrentGame().gameID());
         return "resigned from game";
     }
 
-    private String move(String[] params) throws Exception {
+    private String move(String[] params) {
         if (params.length < 2) {
             throw new IllegalArgumentException("<position 1> <position 2>");
         }
@@ -97,6 +95,7 @@ public class GameClient {
 
 
     public String drawBoard() {
+        // TODO: fix the way clientData stores current gameBoard to have an updated board
         if (clientData.getPlayerColor() != null) {
             return BoardUi.drawBoard(clientData.getCurrentGame().game().getBoard(), clientData.getPlayerColor(), null);
         }
@@ -108,7 +107,7 @@ public class GameClient {
         }
     }
 
-    private String leave() throws Exception{
+    private String leave() {
         System.out.println("Leaving game");
         server.leaveGame(clientData.getAuthToken(), clientData.getCurrentGame().gameID());
         clientData.setPlayerColor(null);

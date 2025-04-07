@@ -7,7 +7,6 @@ import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
-import dataaccess.UserDAO;
 
 import dataaccess.exceptions.DataAccessException;
 import models.*;
@@ -27,14 +26,12 @@ import java.io.IOException;
 @WebSocket
 public class WebSocketHandler {
 
-    private GameDAO gameDAO;
-    private UserDAO userDAO;
-    private AuthDAO authDAO;
-    private GameSessionManager gameSessions;
+    private final GameDAO gameDAO;
+    private final AuthDAO authDAO;
+    private final GameSessionManager gameSessions;
 
-    public WebSocketHandler(GameDAO gameDAO, UserDAO userDAO, AuthDAO authDAO) {
+    public WebSocketHandler(GameDAO gameDAO, AuthDAO authDAO) {
         this.gameDAO = gameDAO;
-        this.userDAO = userDAO;
         this.authDAO = authDAO;
         this.gameSessions = new GameSessionManager();
     }
@@ -82,7 +79,7 @@ public class WebSocketHandler {
                 boardOrientation = ChessGame.TeamColor.WHITE;
             }
 
-            LoadGameMessage loadGame = new LoadGameMessage(currentGame, boardOrientation);
+            LoadGameMessage loadGame = new LoadGameMessage(currentGame);
 
             sendMessage(session, loadGame);
             gameSessions.addSession(currentGame.gameID(), command.getAuthToken(), session);
@@ -122,7 +119,7 @@ public class WebSocketHandler {
 
     private void handleResign(Session session, UserGameCommand command) throws Exception {
         try {
-            if (!isPlayer(command)) {
+            if (isObserver(command)) {
                 throw new DataAccessException("Error: Observer can't resign game");
             }
 
@@ -146,7 +143,7 @@ public class WebSocketHandler {
 
     private void handleMove(Session session, MakeMoveCommand command) throws Exception {
         try {
-            if (!isPlayer(command)) {
+            if (isObserver(command)) {
                 throw new InvalidMoveException("Error: Observer can't move piece");
             }
 
@@ -175,7 +172,7 @@ public class WebSocketHandler {
             currentGame.game().makeMove(move);
             gameDAO.updateGame(currentGame);
 
-            LoadGameMessage loadGame = new LoadGameMessage(currentGame, playerColor);
+            LoadGameMessage loadGame = new LoadGameMessage(currentGame);
             gameSessions.broadcast(gameID, loadGame);
 
             NotificationMessage notification = new NotificationMessage("Player " + auth.username() + " moved " +
@@ -191,13 +188,13 @@ public class WebSocketHandler {
         return game.game().isGameOver();
     }
 
-    private boolean isPlayer(UserGameCommand command) throws Exception {
+    private boolean isObserver(UserGameCommand command) throws Exception {
         int gameID = command.getGameID();
         String authToken = command.getAuthToken();
 
         AuthData auth = authDAO.getAuth(authToken);
         GameData currentGame = gameDAO.getGame(gameID);
 
-        return currentGame.whiteUsername().equals(auth.username()) || currentGame.blackUsername().equals(auth.username());
+        return !currentGame.whiteUsername().equals(auth.username()) && !currentGame.blackUsername().equals(auth.username());
     }
 }

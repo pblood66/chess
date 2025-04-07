@@ -1,13 +1,11 @@
 package clients;
 
-import chess.ChessGame;
 import com.google.gson.Gson;
 import ui.BoardUi;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
-import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
 import java.net.URI;
@@ -15,7 +13,7 @@ import java.net.URI;
 import static ui.EscapeSequences.*;
 
 public class WebSocketCommunicator extends Endpoint {
-    private Session session;
+    private final Session session;
     private final ClientData clientData;
 
 
@@ -27,12 +25,7 @@ public class WebSocketCommunicator extends Endpoint {
         this.session = container.connectToServer(this, socketURI);
         this.clientData = clientData;
 
-        this.session.addMessageHandler(new MessageHandler.Whole<String>() {
-            @Override
-            public void onMessage(String message) {
-                handleMessage(message);
-            }
-        });
+        this.session.addMessageHandler((MessageHandler.Whole<String>) this::handleMessage);
     }
 
     @Override
