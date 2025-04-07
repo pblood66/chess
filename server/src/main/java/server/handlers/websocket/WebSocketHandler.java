@@ -65,18 +65,14 @@ public class WebSocketHandler {
         try {
             GameData currentGame = gameDAO.getGame(command.getGameID());
             AuthData auth = authDAO.getAuth(command.getAuthToken());
-            ChessGame.TeamColor boardOrientation;
 
             String role;
             if (auth.username().equals(currentGame.whiteUsername())) {
                 role = "white";
-                boardOrientation = ChessGame.TeamColor.WHITE;
             } else if (auth.username().equals(currentGame.blackUsername())) {
                 role = "black";
-                boardOrientation = ChessGame.TeamColor.BLACK;
             } else {
                 role = "observer";
-                boardOrientation = ChessGame.TeamColor.WHITE;
             }
 
             LoadGameMessage loadGame = new LoadGameMessage(currentGame);
